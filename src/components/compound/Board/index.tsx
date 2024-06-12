@@ -12,6 +12,7 @@ const Board = ({ players, setMode }: BoardProps) => {
       board={board}
       gameState={gameState}
       setMode={setMode}
+      players={players}
     />
   );
 };

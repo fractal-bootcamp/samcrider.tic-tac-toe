@@ -7,9 +7,10 @@ const Component = ({
   handleReset,
   gameState,
   setMode,
+  players,
 }: Fields) => {
   return (
-    <div>
+    <div className="flex flex-col items-center">
       <button
         onClick={() => setMode(0)}
         className="btn btn-warning top-20 absolute left-20"
@@ -33,7 +34,7 @@ const Component = ({
       <div className="divider divider-warning"></div>
       <div className={s.scoreContainer}>
         <div className={s.scoreBox}>
-          <div>Player: X</div>
+          <div>Player: {players.playerX}</div>
           <div>{gameState.winner.playerX}</div>
         </div>
         <div className={s.scoreBox}>
@@ -41,7 +42,7 @@ const Component = ({
           <div>{gameState.ties}</div>
         </div>
         <div className={s.scoreBox}>
-          <div>Player: O</div>
+          <div>Player: {players.playerO}</div>
           <div>{gameState.winner.playerO}</div>
         </div>
       </div>

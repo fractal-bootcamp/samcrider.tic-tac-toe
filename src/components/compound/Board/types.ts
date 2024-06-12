@@ -28,6 +28,7 @@ export type Fields = {
   handleReset: () => void;
   handleClick: (cell: Cell) => void;
   setMode: React.Dispatch<SetStateAction<Mode>>;
+  players: Players;
 };
 
 export type BoardProps = {
