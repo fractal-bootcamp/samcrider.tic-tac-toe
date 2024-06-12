@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { Mode, Players } from "./types";
+import { Difficulty, Mode, Players } from "./types";
 
 const defaultMode: Mode = 0;
-
 const defaultPlayers: Players = { playerO: "", playerX: "" };
+const defaultDifficulty = "easy";
 
 export const useStartPageData = () => {
   const [mode, setMode] = useState<Mode>(defaultMode);
   const [players, setPlayers] = useState<Players>(defaultPlayers);
-
-  return { mode, setMode, players, setPlayers };
+  const [difficulty, setDifficulty] = useState<Difficulty>(defaultDifficulty);
+  return { mode, setMode, players, setPlayers, difficulty, setDifficulty };
 };

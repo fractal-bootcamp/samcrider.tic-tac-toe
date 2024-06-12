@@ -2,8 +2,7 @@ import Component from "./component";
 import { useBoardData } from "./data";
 import { BoardProps } from "./types";
 
-const SingleplayerBoard = ({ players, setMode }: BoardProps) => {
-  console.log(players);
+const SingleplayerBoard = ({ players, setMode, difficulty }: BoardProps) => {
   const { handleClick, handleReset, board, gameState } = useBoardData();
   return (
     <Component

@@ -1,5 +1,5 @@
 import { SetStateAction } from "react";
-import { Players, Mode } from "../../pages/Start/types";
+import { Players, Mode, Difficulty } from "../../pages/Start/types";
 
 export enum TurnEnum {
   X = "X",
@@ -34,4 +34,5 @@ export type Fields = {
 export type BoardProps = {
   players: Players;
   setMode: React.Dispatch<SetStateAction<Mode>>;
+  difficulty: Difficulty;
 };
