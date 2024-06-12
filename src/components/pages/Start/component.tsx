@@ -1,13 +1,14 @@
 import Board from "../../compound/Board";
 import { Fields } from "./types";
 
-const Component = ({ mode, setMode }: Fields) => {
+const Component = ({ mode, setMode, players, setPlayers }: Fields) => {
   if (mode === 1) {
     return <div className="text-white">coming soon</div>;
   }
   if (mode === 2) {
-    // return <Board playerX={playerX} playerO={playerO} />;
+    return <Board players={players} setMode={setMode} />;
   }
+
   return (
     <div className="flex flex-col items-center gap-10 pb-48">
       <div className="uppercase text-8xl text-white font-extrabold">
@@ -21,12 +22,14 @@ const Component = ({ mode, setMode }: Fields) => {
         <button
           className="btn btn-wide btn-warning"
           onClick={() =>
-            document.getElementById("mulitplayerModal")?.showModal()
+            (
+              document.getElementById("multiplayerModal") as HTMLFormElement
+            )?.showModal()
           }
         >
           MULTIPLAYER
         </button>
-        <dialog id="mulitplayerModal" className="modal">
+        <dialog id="multiplayerModal" className="modal">
           <div className="modal-box flex flex-col gap-4">
             <h3 className="font-bold text-lg">MULTIPLAYER</h3>
             <div className="flex flex-row items-center gap-10">
@@ -35,16 +38,27 @@ const Component = ({ mode, setMode }: Fields) => {
                   type="text"
                   placeholder="Player X"
                   className="input input-bordered w-full"
+                  value={players.playerX}
+                  onChange={({ target }) =>
+                    setPlayers({ ...players, playerX: target.value })
+                  }
                 />
                 <input
                   type="text"
                   placeholder="Player O"
                   className="input input-bordered w-full"
+                  value={players.playerO}
+                  onChange={({ target }) =>
+                    setPlayers({ ...players, playerO: target.value })
+                  }
                 />
               </div>
               <button
                 className="btn btn-warning uppercase mr-4"
-                onClick={() => setMode(2)}
+                onClick={() => {
+                  setMode(2);
+                }}
+                disabled={!players.playerO || !players.playerX ? true : false}
               >
                 play
               </button>

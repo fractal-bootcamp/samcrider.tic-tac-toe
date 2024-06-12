@@ -1,3 +1,6 @@
+import { SetStateAction } from "react";
+import { Players, Mode } from "../../pages/Start/types";
+
 export enum TurnEnum {
   X = "X",
   O = "O",
@@ -24,4 +27,10 @@ export type Fields = {
   gameState: GameState;
   handleReset: () => void;
   handleClick: (cell: Cell) => void;
+  setMode: React.Dispatch<SetStateAction<Mode>>;
+};
+
+export type BoardProps = {
+  players: Players;
+  setMode: React.Dispatch<SetStateAction<Mode>>;
 };

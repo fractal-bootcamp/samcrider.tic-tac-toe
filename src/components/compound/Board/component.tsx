@@ -1,9 +1,21 @@
 import s from "./styles.module.css";
 import { Fields } from "./types";
 
-const Component = ({ board, handleClick, handleReset, gameState }: Fields) => {
+const Component = ({
+  board,
+  handleClick,
+  handleReset,
+  gameState,
+  setMode,
+}: Fields) => {
   return (
     <div>
+      <button
+        onClick={() => setMode(0)}
+        className="btn btn-warning top-20 absolute left-20"
+      >
+        Home
+      </button>
       <div className={s.boardContainer}>
         {board.map((cell, i) => (
           <button
