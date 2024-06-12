@@ -1,19 +1,7 @@
-import { useState } from "react";
-import "./App.css";
-import Board from "./components/compound/Board";
+import Board from "../../compound/Board";
+import { Fields } from "./types";
 
-enum ModeEnum {
-  SINGLEPLAYER = 1,
-  MULTIPLAYER = 2,
-}
-
-type Mode = ModeEnum | null;
-
-const defaultMode: Mode = null;
-
-const App = () => {
-  const [mode, setMode] = useState<Mode>(defaultMode);
-
+const Component = ({ mode, setMode }: Fields) => {
   if (mode === 1) {
     return <div className="text-white">coming soon</div>;
   }
@@ -38,4 +26,4 @@ const App = () => {
   );
 };
 
-export default App;
+export default Component;
