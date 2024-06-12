@@ -2,7 +2,7 @@ import Component from "./component";
 import { useBoardData } from "./data";
 import { BoardProps } from "./types";
 
-const Board = ({ players, setMode }: BoardProps) => {
+const MultiplayerBoard = ({ players, setMode }: BoardProps) => {
   console.log(players);
   const { handleClick, handleReset, board, gameState } = useBoardData();
   return (
@@ -17,4 +17,4 @@ const Board = ({ players, setMode }: BoardProps) => {
   );
 };
 
-export default Board;
+export default MultiplayerBoard;

@@ -1,4 +1,4 @@
-import Board from "../../compound/Board";
+import MultiplayerBoard from "../../compound/MultiplayerBoard";
 import { Fields } from "./types";
 
 const Component = ({ mode, setMode, players, setPlayers }: Fields) => {
@@ -6,7 +6,7 @@ const Component = ({ mode, setMode, players, setPlayers }: Fields) => {
     return <div className="text-white">coming soon</div>;
   }
   if (mode === 2) {
-    return <Board players={players} setMode={setMode} />;
+    return <MultiplayerBoard players={players} setMode={setMode} />;
   }
 
   return (
