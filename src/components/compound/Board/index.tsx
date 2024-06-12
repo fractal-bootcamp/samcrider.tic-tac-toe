@@ -1,7 +1,9 @@
 import Component from "./component";
 import { useBoardData } from "./data";
+import { BoardProps } from "./types";
 
-const Board = () => {
+const Board = ({ players, setMode }: BoardProps) => {
+  console.log(players);
   const { handleClick, handleReset, board, gameState } = useBoardData();
   return (
     <Component
@@ -9,6 +11,8 @@ const Board = () => {
       handleReset={handleReset}
       board={board}
       gameState={gameState}
+      setMode={setMode}
+      players={players}
     />
   );
 };

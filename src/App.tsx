@@ -1,8 +1,8 @@
 import "./App.css";
-import Board from "./components/Board";
+import Start from "./components/pages/Start";
 
 const App = () => {
-  return <Board />;
+  return <Start />;
 };
 
 export default App;
