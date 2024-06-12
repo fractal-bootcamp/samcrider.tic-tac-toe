@@ -3,6 +3,7 @@
   flex-wrap: wrap;
   width: 650px;
 }
+
 .boardButton {
   flex: 1 0 calc(33.333% - 8px); /* 33.333% width with 8px margin */
   height: 200px;
@@ -18,7 +19,20 @@
     font-size: 10rem;
   }
 }
-.resetButton {
-  background-color: yellow;
-  color: black;
+
+.scoreContainer {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  padding: 24px;
+  padding-top: 0;
+  gap: 64px;
+}
+
+.scoreBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 2rem;
+  font-weight: 700;
 }

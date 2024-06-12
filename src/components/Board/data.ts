@@ -19,8 +19,6 @@ const defaultBoard: Cell[] = [
   { id: 8, value: null },
 ];
 
-let counter = 0;
-
 export const useBoardData = () => {
   const [board, setBoard] = useState<Cell[]>(defaultBoard);
   const [turn, setTurn] = useState<TurnEnum>(TurnEnum.X);
@@ -38,7 +36,6 @@ export const useBoardData = () => {
   ];
 
   const checkWinner = () => {
-    console.log(board);
     possibleWinPositions.forEach((possibleWinPosition) => {
       // loop through each possibility
       const currentGameState = possibleWinPosition.reduce((curr, acc) => {
@@ -51,13 +48,11 @@ export const useBoardData = () => {
         }
         return null;
       });
-      console.log("currentstate", currentGameState);
 
       // there is no win condition
       if (!currentGameState) {
         // if the board is full
         if (!board.find((cell) => !cell.value)) {
-          console.log("in the tie check!");
           return setGameState({
             ...gameState,
             ties: gameState.ties + 1,
@@ -94,9 +89,6 @@ export const useBoardData = () => {
   };
 
   useEffect(() => {
-    console.log("in useEffect", counter);
-    counter = counter + 1;
-
     checkWinner();
   }, [board]);
 

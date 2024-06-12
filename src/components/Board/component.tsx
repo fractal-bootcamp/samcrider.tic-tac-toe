@@ -18,22 +18,27 @@ const Component = ({ board, handleClick, handleReset, gameState }: Fields) => {
           </button>
         ))}
       </div>
-      <div>
-        <div>
+      <div className="divider divider-warning"></div>
+      <div className={s.scoreContainer}>
+        <div className={s.scoreBox}>
           <div>Player: X</div>
           <div>{gameState.winner.playerX}</div>
         </div>
-        <div>
+        <div className={s.scoreBox}>
           <div>Ties</div>
           <div>{gameState.ties}</div>
         </div>
-        <div>
+        <div className={s.scoreBox}>
           <div>Player: O</div>
           <div>{gameState.winner.playerO}</div>
         </div>
       </div>
-      <button className={s.resetButton} onClick={handleReset}>
-        reset
+      <button
+        className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
+        onClick={handleReset}
+        disabled={gameState.currentGameFinished ? false : true}
+      >
+        play again
       </button>
     </div>
   );
