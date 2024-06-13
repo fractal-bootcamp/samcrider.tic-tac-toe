@@ -75,7 +75,7 @@ const Component = ({
               <button
                 className="btn btn-warning uppercase mr-4"
                 onClick={() => {
-                  setMode(2);
+                  setMode(1);
                 }}
                 disabled={!players.playerX ? true : false}
               >

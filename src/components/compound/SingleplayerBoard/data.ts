@@ -3,6 +3,7 @@ import { Cell, GameState, TurnEnum } from "./types";
 
 const defaultGameState: GameState = {
   currentGameFinished: false,
+  mostRecentWinner: null,
   winner: { playerX: 0, playerO: 0 },
   ties: 0,
 };
@@ -23,9 +24,13 @@ export const useBoardData = () => {
   const [board, setBoard] = useState<Cell[]>(defaultBoard);
   const [turn, setTurn] = useState<TurnEnum>(TurnEnum.X);
   const [gameState, setGameState] = useState<GameState>(defaultGameState);
-  const [agentMove, setAgentMove] = useState<number | null>(null);
+  const [score, setScore] = useState<number>(0);
 
   const checkWinner = () => {
+    console.log("Check Winner");
+
+    setGameState({ ...gameState, mostRecentWinner: null });
+
     possibleWinPositions.forEach((possibleWinPosition) => {
       // loop through each possibility
       const currentGameState = possibleWinPosition.reduce((curr, acc) => {
@@ -42,11 +47,16 @@ export const useBoardData = () => {
       // there is no win condition
       if (!currentGameState) {
         // if the board is full
-        if (!board.find((cell) => !cell.value)) {
+        if (board.every((cell) => cell.value !== null)) {
+          console.log("board in full board check", board);
+
+          console.log("board is apparently full...");
+
           return setGameState({
             ...gameState,
             ties: gameState.ties + 1,
             currentGameFinished: true,
+            mostRecentWinner: null,
           });
         }
         // just return if board isn't full
@@ -62,6 +72,7 @@ export const useBoardData = () => {
             playerX: gameState.winner.playerX + 1,
           },
           currentGameFinished: true,
+          mostRecentWinner: "playerX",
         });
       }
 
@@ -73,68 +84,81 @@ export const useBoardData = () => {
             playerO: gameState.winner.playerO + 1,
           },
           currentGameFinished: true,
+          mostRecentWinner: "playerO",
         });
       }
     });
   };
 
-  function minimax(
-    board: Cell[],
-    depth: number,
-    isMaximizing: boolean,
-    memo: Map<string, number>
-  ): number {
-    const boardKey = board.toString();
-    if (memo.has(boardKey)) {
-      return memo.get(boardKey)!;
+  const miniMaxCheckWinner = () => {
+    let projected;
+    possibleWinPositions.forEach((possibleWinPosition) => {
+      // loop through each possibility
+      const currentGameState = possibleWinPosition.reduce((curr, acc) => {
+        // if current value is null, there is no win in current possibility
+        if (!curr) {
+          return null;
+        }
+        if (curr === acc) {
+          return curr;
+        }
+        return null;
+      });
+      projected = currentGameState;
+    });
+    return projected;
+  };
+
+  // Minimax algorithm
+  const miniMax = (board: Cell[], isMaximizing: boolean): number => {
+    const currentProjectedWinner = miniMaxCheckWinner();
+    if (currentProjectedWinner === TurnEnum.O) {
+      setScore(-1);
+    } else if (currentProjectedWinner === TurnEnum.X) {
+      setScore(1);
+    } else if (board.every((cell) => cell.value !== null)) {
+      setScore(0);
     }
 
-    if (isMaximizing) {
-      let maxEval = -Infinity;
-      for (let i = 0; i < 9; i++) {
-        if (board[i].value === null) {
-          board[i].value = TurnEnum.O;
-          const evaluate = minimax(board, depth + 1, false, memo);
-          board[i].value = null;
-          maxEval = Math.max(maxEval, evaluate);
-        }
-      }
-      memo.set(boardKey, maxEval);
-      return maxEval;
-    } else {
-      let minEval = Infinity;
-      for (let i = 0; i < 9; i++) {
-        if (board[i].value === null) {
-          board[i].value = TurnEnum.X;
-          const evaluate = minimax(board, depth + 1, true, memo);
-          board[i].value = null;
-          minEval = Math.min(minEval, evaluate);
-        }
-      }
-      memo.set(boardKey, minEval);
-      return minEval;
-    }
-  }
-
-  function bestMove(board: Cell[]): number {
-    let bestVal = -Infinity;
-    let move = -1;
-    const memo = new Map<string, number>();
-
+    let moves = [];
     for (let i = 0; i < 9; i++) {
       if (board[i].value === null) {
-        board[i].value = turn;
-        const moveVal = minimax(board, 0, false, memo);
+        let move: { index: number; value: number } = {
+          index: board[i].id,
+          value: 0,
+        };
+
+        board[i].value = isMaximizing ? TurnEnum.O : TurnEnum.X;
+
+        miniMax(board, !isMaximizing);
+        move.value = score;
+
         board[i].value = null;
-        if (moveVal > bestVal) {
-          move = i;
-          bestVal = moveVal;
-        }
+
+        moves.push(move);
       }
     }
 
-    return move;
-  }
+    let bestMove = -1;
+    isMaximizing
+      ? moves.forEach((move) => {
+          let bestScore = -Infinity;
+
+          if (move.value > bestScore) {
+            bestScore = move.value;
+            bestMove = move.index;
+          }
+        })
+      : moves.forEach((move) => {
+          let bestScore = Infinity;
+          if (move.value < bestScore) {
+            bestScore = move.value;
+            bestMove = move.index;
+          }
+        });
+
+    return bestMove;
+  };
 
   const possibleWinPositions: (TurnEnum | null)[][] = [
     [board[0].value, board[1].value, board[2].value],
@@ -148,12 +172,19 @@ export const useBoardData = () => {
   ];
 
   useEffect(() => {
+    console.log(gameState);
+
     checkWinner();
   }, [board]);
 
-  const handleClick = (cell: Cell) => {
+  useEffect(() => {
+    console.log("whose turn?", turn);
     if (turn === TurnEnum.O) {
-      const boardIndex = bestMove(board);
+      console.log("Agent turn starting");
+
+      const boardIndex = miniMax(board, true);
+      console.log("best spot (button index) for agent", boardIndex);
+
       const newBoard = board.map((currCell) => {
         if (currCell.id === boardIndex) {
           const newVal = currCell.value ? null : turn;
@@ -165,9 +196,11 @@ export const useBoardData = () => {
         return currCell;
       });
       setBoard(newBoard);
-      setAgentMove(null);
       setTurn(turn ? TurnEnum.X : TurnEnum.O);
     }
+  }, [turn]);
+
+  const handleClick = (cell: Cell) => {
     const newBoard = board.map((currCell) => {
       if (currCell.id === cell.id) {
         const newVal = currCell.value ? null : turn;
@@ -179,7 +212,6 @@ export const useBoardData = () => {
       return currCell;
     });
     setBoard(newBoard);
-    setAgentMove(null);
     setTurn(turn === TurnEnum.X ? TurnEnum.O : TurnEnum.X);
   };
 

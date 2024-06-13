@@ -18,6 +18,7 @@ type Winner = {
 
 export type GameState = {
   currentGameFinished: boolean;
+  mostRecentWinner: "playerO" | "playerX" | null;
   winner: Winner;
   ties: number;
 };

@@ -3,7 +3,6 @@ import { useBoardData } from "./data";
 import { BoardProps } from "./types";
 
 const MultiplayerBoard = ({ players, setMode }: BoardProps) => {
-  console.log(players);
   const { handleClick, handleReset, board, gameState } = useBoardData();
   return (
     <Component
