@@ -6,7 +6,8 @@ const gameRouter = express.Router();
 // default game list
 let games: Game[] = [
   {
-    id: 0,
+    id: "0",
+    name: "Admin's Game",
     board: [
       { id: 0, value: null },
       { id: 1, value: null },
@@ -26,7 +27,7 @@ let games: Game[] = [
 ];
 
 gameRouter.get("/", (_req, res) => {
-  res.send("meep");
+  res.status(200).json({ games: games });
 });
 
 gameRouter.get("/game/:id", (req, res) => {
