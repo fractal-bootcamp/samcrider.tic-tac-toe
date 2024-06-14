@@ -1,13 +1,16 @@
 import { useEffect, useState } from "react";
-import { Difficulty, Mode, Players } from "./types";
+import { Difficulty, Mode, OnlinePlayer, Players } from "./types";
 
 const defaultMode: Mode = 0;
 const defaultPlayers: Players = { playerO: "", playerX: "" };
+const defaultOnlinePlayer: OnlinePlayer = { name: "" };
 const defaultDifficulty = "easy";
 
 export const useStartPageData = () => {
   const [mode, setMode] = useState<Mode>(defaultMode);
   const [players, setPlayers] = useState<Players>(defaultPlayers);
+  const [onlinePlayer, setOnlinePlayer] =
+    useState<OnlinePlayer>(defaultOnlinePlayer);
   const [difficulty, setDifficulty] = useState<Difficulty>(defaultDifficulty);
 
   useEffect(() => {
@@ -16,5 +19,14 @@ export const useStartPageData = () => {
     }
   }, [mode]);
 
-  return { mode, setMode, players, setPlayers, difficulty, setDifficulty };
+  return {
+    mode,
+    setMode,
+    players,
+    setPlayers,
+    difficulty,
+    setDifficulty,
+    onlinePlayer,
+    setOnlinePlayer,
+  };
 };

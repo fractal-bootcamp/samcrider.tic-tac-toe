@@ -1,4 +1,8 @@
+import MultiPlayer from "../../base/MultiPlayerButtonWithModal/component";
+import OnlineMultiPlayer from "../../base/OnlineMultiPlayerButtonWithModal/component";
+import SinglePlayer from "../../base/SinglePlayerButtonWithModal/component";
 import MultiplayerBoard from "../../compound/MultiplayerBoard";
+import OnlineMultiplayerLobby from "../../compound/OnlineMultiplayerLobby";
 import SingleplayerBoard from "../../compound/SingleplayerBoard";
 import { Fields } from "./types";
 
@@ -9,6 +13,8 @@ const Component = ({
   setPlayers,
   difficulty,
   setDifficulty,
+  onlinePlayer,
+  setOnlinePlayer,
 }: Fields) => {
   if (mode === 1) {
     return (
@@ -23,119 +29,38 @@ const Component = ({
     return <MultiplayerBoard players={players} setMode={setMode} />;
   }
 
+  if (mode === 3) {
+    return (
+      <OnlineMultiplayerLobby setMode={setMode} onlinePlayer={onlinePlayer} />
+    );
+  }
+
   return (
     <div className="flex flex-col items-center gap-10 pb-48">
       <div className="uppercase text-8xl text-white font-extrabold">
         tic tac toe
       </div>
       <div className="text-white text-md">Hey! Great to have you.</div>
-      <div className="flex flex-col gap-4 pt-20">
-        <button
-          className="btn btn-wide btn-warning"
-          onClick={() =>
-            (
-              document.getElementById("singleplayerModal") as HTMLFormElement
-            )?.showModal()
-          }
-        >
-          SINGLEPLAYER
-        </button>
-        <dialog id="singleplayerModal" className="modal">
-          <div className="modal-box flex flex-col gap-4">
-            <h3 className="font-bold text-lg">SINGLEPLAYER</h3>
-            <div className="flex flex-row items-center gap-10">
-              <div className="flex flex-col gap-2 flex-1">
-                <input
-                  type="text"
-                  placeholder="Player X"
-                  className="input input-bordered w-full"
-                  value={players.playerX}
-                  onChange={({ target }) =>
-                    setPlayers({ playerX: target.value, playerO: "Agent" })
-                  }
-                />
-                <div className="form-control">
-                  <label className="label cursor-pointer">
-                    <span className="label-text">AI Difficulty</span>
-                    <div className="flex items-center gap-2">
-                      <span className="label-text">Easy</span>
-                      <input
-                        type="checkbox"
-                        className="toggle"
-                        value={difficulty}
-                        onChange={() =>
-                          setDifficulty(difficulty === "easy" ? "hard" : "easy")
-                        }
-                      />
-                      <span className="label-text">Hard</span>
-                    </div>
-                  </label>
-                </div>
-              </div>
-              <button
-                className="btn btn-warning uppercase mr-4"
-                onClick={() => {
-                  setMode(1);
-                }}
-                disabled={!players.playerX ? true : false}
-              >
-                play
-              </button>
-            </div>
-          </div>
-          <form method="dialog" className="modal-backdrop">
-            <button>close</button>
-          </form>
-        </dialog>
-        <button
-          className="btn btn-wide btn-warning"
-          onClick={() =>
-            (
-              document.getElementById("multiplayerModal") as HTMLFormElement
-            )?.showModal()
-          }
-        >
-          MULTIPLAYER
-        </button>
-        <dialog id="multiplayerModal" className="modal">
-          <div className="modal-box flex flex-col gap-4">
-            <h3 className="font-bold text-lg">MULTIPLAYER</h3>
-            <div className="flex flex-row items-center gap-10">
-              <div className="flex flex-col gap-2 flex-1">
-                <input
-                  type="text"
-                  placeholder="Player X"
-                  className="input input-bordered w-full"
-                  value={players.playerX}
-                  onChange={({ target }) =>
-                    setPlayers({ ...players, playerX: target.value })
-                  }
-                />
-                <input
-                  type="text"
-                  placeholder="Player O"
-                  className="input input-bordered w-full"
-                  value={players.playerO}
-                  onChange={({ target }) =>
-                    setPlayers({ ...players, playerO: target.value })
-                  }
-                />
-              </div>
-              <button
-                className="btn btn-warning uppercase mr-4"
-                onClick={() => {
-                  setMode(2);
-                }}
-                disabled={!players.playerO || !players.playerX ? true : false}
-              >
-                play
-              </button>
-            </div>
-          </div>
-          <form method="dialog" className="modal-backdrop">
-            <button>close</button>
-          </form>
-        </dialog>
+      <div className="flex flex-row items-stretch h-[100%] gap-4 pt-20">
+        <div className="flex flex-col gap-4">
+          <SinglePlayer
+            players={players}
+            setPlayers={setPlayers}
+            difficulty={difficulty}
+            setDifficulty={setDifficulty}
+            setMode={setMode}
+          />
+          <MultiPlayer
+            players={players}
+            setPlayers={setPlayers}
+            setMode={setMode}
+          />
+        </div>
+        <OnlineMultiPlayer
+          setMode={setMode}
+          onlinePlayer={onlinePlayer}
+          setOnlinePlayer={setOnlinePlayer}
+        />
       </div>
     </div>
   );
