@@ -2,8 +2,16 @@ import Component from "./component";
 import { useStartPageData } from "./data";
 
 const Start = () => {
-  const { mode, setMode, players, setPlayers, difficulty, setDifficulty } =
-    useStartPageData();
+  const {
+    mode,
+    setMode,
+    players,
+    setPlayers,
+    difficulty,
+    setDifficulty,
+    onlinePlayer,
+    setOnlinePlayer,
+  } = useStartPageData();
   return (
     <Component
       mode={mode}
@@ -12,6 +20,8 @@ const Start = () => {
       setPlayers={setPlayers}
       difficulty={difficulty}
       setDifficulty={setDifficulty}
+      onlinePlayer={onlinePlayer}
+      setOnlinePlayer={setOnlinePlayer}
     />
   );
 };
