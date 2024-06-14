@@ -6,29 +6,26 @@ const OnlineMultiPlayer = ({
   onlinePlayer,
 }: Fields) => {
   return (
-    <div
-      onClick={() =>
-        (
-          document.getElementById("onlineMultiplayerModal") as HTMLFormElement
-        )?.showModal()
-      }
-      className="btn btn-warning flex"
-    >
-      <div className="flex flex-col gap-2 ">
-        <span>ONLINE</span>
-        <span>MULTIPLAYER</span>
-      </div>
+    <div>
+      <button
+        className="btn btn-wide btn-warning"
+        onClick={() =>
+          (
+            document.getElementById("onlineMultiplayerModal") as HTMLFormElement
+          )?.showModal()
+        }
+      >
+        ONLINE MULTIPLAYER
+      </button>
       <dialog id="onlineMultiplayerModal" className="modal">
         <div className="modal-box flex flex-col gap-4">
-          <h3 className="font-bold text-lg text-[#ececec]">
-            ONLINE MULTIPLAYER
-          </h3>
+          <h3 className="font-bold text-lg">ONLINE MULTIPLAYER</h3>
           <div className="flex flex-row items-center gap-10">
             <div className="flex flex-col gap-2 flex-1">
               <input
                 type="text"
                 placeholder="Your name"
-                className="input input-bordered w-full text-[#ececec]"
+                className="input input-bordered w-full"
                 value={onlinePlayer.name}
                 onChange={({ target }) =>
                   setOnlinePlayer({ name: target.value })

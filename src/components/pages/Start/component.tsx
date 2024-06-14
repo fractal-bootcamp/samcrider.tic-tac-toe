@@ -41,21 +41,19 @@ const Component = ({
         tic tac toe
       </div>
       <div className="text-white text-md">Hey! Great to have you.</div>
-      <div className="flex flex-row items-stretch h-[100%] gap-4 pt-20">
-        <div className="flex flex-col gap-4">
-          <SinglePlayer
-            players={players}
-            setPlayers={setPlayers}
-            difficulty={difficulty}
-            setDifficulty={setDifficulty}
-            setMode={setMode}
-          />
-          <MultiPlayer
-            players={players}
-            setPlayers={setPlayers}
-            setMode={setMode}
-          />
-        </div>
+      <div className="flex flex-col gap-4 pt-20">
+        <SinglePlayer
+          players={players}
+          setPlayers={setPlayers}
+          difficulty={difficulty}
+          setDifficulty={setDifficulty}
+          setMode={setMode}
+        />
+        <MultiPlayer
+          players={players}
+          setPlayers={setPlayers}
+          setMode={setMode}
+        />
         <OnlineMultiPlayer
           setMode={setMode}
           onlinePlayer={onlinePlayer}

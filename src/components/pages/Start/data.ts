@@ -16,6 +16,7 @@ export const useStartPageData = () => {
   useEffect(() => {
     if (mode === 0) {
       setPlayers({ playerO: "", playerX: "" });
+      setOnlinePlayer({ name: "" });
     }
   }, [mode]);
 
