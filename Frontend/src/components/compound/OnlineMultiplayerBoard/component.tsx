@@ -42,7 +42,7 @@ const Component = ({
           <div>{gameState.ties}</div>
         </div>
         <div className={s.scoreBox}>
-          <div>Player: {players[1].name}</div>
+          <div>Player: {players[1] ? players[1].name : "Waiting..."}</div>
           <div>{gameState.winner.playerO}</div>
         </div>
       </div>

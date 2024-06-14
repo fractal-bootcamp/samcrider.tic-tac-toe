@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
 import Component from "./component";
 import { useBoardData } from "./data";
-import { Game, Player } from "../../../lib/services/game/types";
 import { OnlineBoardProps } from "./types";
-import { gameService } from "../../../lib/services/game/service";
 
 const OnlineMultiplayerBoard = ({
   player,
@@ -11,26 +8,10 @@ const OnlineMultiplayerBoard = ({
   setJoined,
   setMode,
 }: OnlineBoardProps) => {
-  console.log("for real here");
-
-  const { handleClick, handleReset, board, gameState } = useBoardData();
-  const [players, setPlayers] = useState<Player[]>([]);
-  const [game, setGame] = useState<Game | undefined>(undefined);
-
-  const getGame = async () => {
-    try {
-      const data = await gameService().getGame(gameId);
-      const game = data.game as Game;
-      setGame(game);
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  // useEffect(() => {
-  //   getGame();
-  // }, []);
-  // setPlayers([...players, player]);
+  const { handleClick, handleReset, gameState, players, game } = useBoardData(
+    gameId,
+    player
+  );
 
   if (game) {
     return (

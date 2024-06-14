@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
-import { Cell, Symbol } from "../../../lib/services/game/types";
+import { Cell, Game, Player, Symbol } from "../../../lib/services/game/types";
 import { GameState } from "../MultiplayerBoard/types";
+import { gameService } from "../../../lib/services/game/service";
 
 const defaultGameState: GameState = {
   currentGameFinished: false,
@@ -20,10 +21,32 @@ const defaultBoard: Cell[] = [
   { id: 8, value: null },
 ];
 
-export const useBoardData = () => {
+export const useBoardData = (gameId: string, player: Player) => {
   const [board, setBoard] = useState<Cell[]>(defaultBoard);
   const [turn, setTurn] = useState<Symbol>(Symbol.X);
   const [gameState, setGameState] = useState<GameState>(defaultGameState);
+  const [players, setPlayers] = useState<Player[]>([]);
+  const [game, setGame] = useState<Game | undefined>(undefined);
+
+  const getGame = async () => {
+    try {
+      const data = await gameService().getGame(gameId);
+      const game = data.game as Game;
+      setGame(game);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  console.log("before effect");
+
+  useEffect(() => {
+    console.log("in effect");
+
+    setPlayers([...players, player]);
+
+    getGame();
+  }, []);
 
   const possibleWinPositions: (Symbol | null)[][] = [
     [board[0].value, board[1].value, board[2].value],
@@ -114,5 +137,13 @@ export const useBoardData = () => {
     setGameState({ ...gameState, currentGameFinished: false });
   };
 
-  return { handleClick, handleReset, board, gameState };
+  return {
+    handleClick,
+    handleReset,
+    board,
+    gameState,
+    players,
+    setPlayers,
+    game,
+  };
 };
