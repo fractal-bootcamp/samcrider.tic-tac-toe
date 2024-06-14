@@ -1,3 +1,4 @@
+import React from "react";
 import Component from "./component";
 import { useBoardData } from "./data";
 import { BoardProps } from "./types";

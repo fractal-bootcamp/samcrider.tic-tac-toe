@@ -1,3 +1,4 @@
+import React from "react";
 import { Fields } from "./types";
 
 const Component = ({ setMode, onlinePlayer }: Fields) => {

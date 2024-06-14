@@ -1,3 +1,4 @@
+import React from "react";
 import MultiPlayer from "../../base/MultiPlayerButtonWithModal/component";
 import OnlineMultiPlayer from "../../base/OnlineMultiPlayerButtonWithModal/component";
 import SinglePlayer from "../../base/SinglePlayerButtonWithModal/component";

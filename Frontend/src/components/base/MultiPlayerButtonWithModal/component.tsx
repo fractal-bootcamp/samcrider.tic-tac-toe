@@ -1,3 +1,4 @@
+import React from "react";
 import { Fields } from "./types";
 
 const MultiPlayer = ({ players, setPlayers, setMode }: Fields) => {

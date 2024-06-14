@@ -1,5 +1,6 @@
-import s from "./styles.module.css";
+import React from "react";
 import { Fields } from "./types";
+import s from "./styles.module.css";
 
 const Component = ({
   board,
