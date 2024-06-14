@@ -1,4 +1,3 @@
-import React from "react";
 import { Fields } from "./types";
 import s from "./styles.module.css";
 

@@ -1,4 +1,3 @@
-import React from "react";
 import { Fields } from "./types";
 
 const OnlineMultiPlayer = ({
