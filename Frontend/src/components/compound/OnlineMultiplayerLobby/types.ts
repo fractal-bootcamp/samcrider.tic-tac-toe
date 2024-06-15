@@ -4,18 +4,12 @@ import { Game, Player } from "../../../lib/services/game/types";
 
 export type Fields = {
   setMode: Dispatch<SetStateAction<Mode>>;
-  onlinePlayer: Player;
   games: Game[] | undefined;
-  joined: JoinState;
-  setJoined: Dispatch<SetStateAction<JoinState>>;
+  selectedGame: Game | undefined;
+  handleJoinGame: (id: string) => void;
 };
 
 export type LobbyProps = {
   onlinePlayer: Player;
   setMode: Dispatch<SetStateAction<Mode>>;
-};
-
-export type JoinState = {
-  joined: boolean;
-  gameId: string | null;
 };

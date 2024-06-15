@@ -3,14 +3,13 @@ import { useLobbyData } from "./data";
 import { LobbyProps } from "./types";
 
 const OnlineMultiplayerLobby = ({ onlinePlayer, setMode }: LobbyProps) => {
-  const { games, joined, setJoined } = useLobbyData();
+  const { games, handleJoinGame, selectedGame } = useLobbyData(onlinePlayer);
   return (
     <Component
       setMode={setMode}
-      onlinePlayer={onlinePlayer}
       games={games}
-      joined={joined}
-      setJoined={setJoined}
+      selectedGame={selectedGame}
+      handleJoinGame={handleJoinGame}
     />
   );
 };

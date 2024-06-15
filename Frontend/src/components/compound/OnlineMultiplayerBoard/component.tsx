@@ -1,14 +1,7 @@
 import { Fields } from "./types";
 import s from "./styles.module.css";
 
-const Component = ({
-  board,
-  handleClick,
-  handleReset,
-  gameState,
-  setMode,
-  players,
-}: Fields) => {
+const Component = ({ handleClick, handleReset, setMode, game }: Fields) => {
   return (
     <div className="flex flex-col items-center">
       <button
@@ -18,13 +11,21 @@ const Component = ({
         Lobby
       </button>
       <div className={s.boardContainer}>
-        {board.map((cell, i) => (
+        {game.board.map((cell, i) => (
           <button
             key={i}
             className={s.boardButton}
-            onClick={() => handleClick(cell)}
+            onClick={() =>
+              game.playerO && game.playerX
+                ? handleClick(cell)
+                : alert("waiting for second player")
+            }
             disabled={
-              gameState.currentGameFinished ? true : cell.value ? true : false
+              game.winState.currentGameFinished
+                ? true
+                : cell.value
+                ? true
+                : false
             }
           >
             <span>{cell.value}</span>
@@ -34,22 +35,22 @@ const Component = ({
       <div className="divider divider-warning"></div>
       <div className={s.scoreContainer}>
         <div className={s.scoreBox}>
-          <div>Player: {players[0].name}</div>
-          <div>{gameState.winner.playerX}</div>
+          <div>Player: {game.playerX ? game.playerX.name : "Waiting..."}</div>
+          <div>{game.winState.playerX}</div>
         </div>
         <div className={s.scoreBox}>
           <div>Ties</div>
-          <div>{gameState.ties}</div>
+          <div>{game.winState.ties}</div>
         </div>
         <div className={s.scoreBox}>
-          <div>Player: {players[1] ? players[1].name : "Waiting..."}</div>
-          <div>{gameState.winner.playerO}</div>
+          <div>Player: {game.playerO ? game.playerO.name : "Waiting..."}</div>
+          <div>{game.winState.playerO}</div>
         </div>
       </div>
       <button
         className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
-        onClick={handleReset}
-        disabled={gameState.currentGameFinished ? false : true}
+        onClick={() => handleReset(game.id)}
+        disabled={game.winState.currentGameFinished ? false : true}
       >
         play again
       </button>
