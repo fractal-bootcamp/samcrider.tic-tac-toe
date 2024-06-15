@@ -22,11 +22,13 @@ export type Game = {
   id: string;
   name: string;
   board: Cell[];
-  currentPlayer: Player;
-  playerX: Player;
-  playerO: Player;
+  currentPlayer: Player | null;
+  playerX: Player | null;
+  playerO: Player | null;
   winState: {
-    outcome: Outcome | null;
-    winner: Symbol | null;
+    playerX: number;
+    playerO: number;
+    ties: number;
+    currentGameFinished: boolean;
   };
 };

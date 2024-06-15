@@ -3,19 +3,13 @@ import OnlineMultiplayerBoard from "../OnlineMultiplayerBoard";
 
 const Component = ({
   setMode,
-  onlinePlayer,
   games,
-  joined,
-  setJoined,
+  handleJoinGame,
+  selectedGame,
 }: Fields) => {
-  if (joined.gameId && joined.joined) {
+  if (selectedGame) {
     return (
-      <OnlineMultiplayerBoard
-        setMode={setMode}
-        gameId={joined.gameId}
-        setJoined={setJoined}
-        player={onlinePlayer}
-      />
+      <OnlineMultiplayerBoard setMode={setMode} selectedGame={selectedGame} />
     );
   }
 
@@ -42,9 +36,7 @@ const Component = ({
                   <div className="card-actions justify-end">
                     <button
                       className="btn btn-primary"
-                      onClick={() =>
-                        setJoined({ joined: true, gameId: game.id })
-                      }
+                      onClick={() => handleJoinGame(game.id)}
                     >
                       Join
                     </button>

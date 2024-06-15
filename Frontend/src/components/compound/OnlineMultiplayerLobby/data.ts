@@ -2,15 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { gameService } from "../../../lib/services/game/service";
-import type { Game } from "../../../lib/services/game/types";
-import { JoinState } from "./types";
+import type { Game, Player } from "../../../lib/services/game/types";
 
-export const useLobbyData = () => {
+export const useLobbyData = (onlinePlayer: Player) => {
   const [games, setGames] = useState<Game[] | undefined>(undefined);
-  const [joined, setJoined] = useState<JoinState>({
-    joined: false,
-    gameId: null,
-  });
+  const [selectedGame, setSelectedGame] = useState<Game | undefined>(undefined);
 
   const getAllGames = async () => {
     try {
@@ -22,9 +18,14 @@ export const useLobbyData = () => {
     }
   };
 
+  const handleJoinGame = async (id: string) => {
+    const data = await gameService().getGame(id, onlinePlayer);
+    setSelectedGame(data.game);
+  };
+
   useEffect(() => {
     getAllGames();
   }, []);
 
-  return { games, joined, setJoined };
+  return { games, handleJoinGame, selectedGame };
 };

@@ -3,25 +3,18 @@ import { useBoardData } from "./data";
 import { OnlineBoardProps } from "./types";
 
 const OnlineMultiplayerBoard = ({
-  player,
-  gameId,
-  setJoined,
+  selectedGame,
   setMode,
 }: OnlineBoardProps) => {
-  const { handleClick, handleReset, gameState, players, game } = useBoardData(
-    gameId,
-    player
-  );
+  const { handleClick, handleReset, game } = useBoardData(selectedGame);
 
   if (game) {
     return (
       <Component
         handleClick={handleClick}
         handleReset={handleReset}
-        board={game.board}
-        gameState={gameState}
+        game={game}
         setMode={setMode}
-        players={players}
       />
     );
   }
@@ -34,7 +27,6 @@ const OnlineMultiplayerBoard = ({
       <button
         onClick={() => {
           console.log("hereski");
-          setJoined({ joined: false, gameId: null });
           setMode(3);
         }}
         className="btn btn-wide btn-warning"
