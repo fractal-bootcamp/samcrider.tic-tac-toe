@@ -7,7 +7,7 @@ const baseUrl: string = "/api/games";
 export interface GameApi {
   getAllGames: () => Promise<any>;
   getGame: (id: string, player: Player) => Promise<any>;
-  createGame: () => Promise<any>;
+  createGame: (player: Player, gameTitle: string) => Promise<any>;
   makeGameMove: (cell: Cell, id: string) => Promise<any>;
   resetGameBoard: (id: string) => Promise<any>;
   hydrateGame: (id: string) => Promise<any>;
@@ -41,7 +41,17 @@ export const gameService: GameService = () => ({
       console.error(e);
     }
   },
-  createGame: async () => {},
+  createGame: async (player: Player, gameTitle: string) => {
+    try {
+      const res = await axios.post(`${baseUrl}/create`, {
+        gameTitle: gameTitle,
+        player: player,
+      });
+      return res.data;
+    } catch (e) {
+      console.error(e);
+    }
+  },
   makeGameMove: async (cell: Cell, id: string) => {
     try {
       const res = await axios.post(`${baseUrl}/game/${id}/move`, {

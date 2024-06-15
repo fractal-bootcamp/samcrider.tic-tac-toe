@@ -49,11 +49,8 @@ gameRouter.post("/game/:id", (req, res) => {
     return res.status(404).send("Game not found");
   }
 
-  console.log("g1", game);
-
   // destructure player from request
   const { player } = req.body;
-  console.log(player);
   // assert player type
   const assertedPlayer = player as Player;
 
@@ -72,8 +69,47 @@ gameRouter.post("/game/:id", (req, res) => {
   game.playerX.symbol = Symbol.X;
   // set initial currentPlayer to X
   game.currentPlayer = game.playerX;
-  console.log(game);
   res.status(200).json({ game: game });
+});
+
+gameRouter.post("/create", (req, res) => {
+  // destructure player and game title from request
+  const { player, gameTitle } = req.body;
+  // assert player type
+  const assertedPlayer = player as Player;
+  const assertedGameTitle = gameTitle as string;
+
+  // build new game
+  const newGame = {
+    id: String(games.length + 1),
+    name: assertedGameTitle,
+    board: [
+      { id: 0, value: null },
+      { id: 1, value: null },
+      { id: 2, value: null },
+      { id: 3, value: null },
+      { id: 4, value: null },
+      { id: 5, value: null },
+      { id: 6, value: null },
+      { id: 7, value: null },
+      { id: 8, value: null },
+    ],
+    currentPlayer: null,
+    playerX: assertedPlayer,
+    playerO: null,
+    winState: { playerX: 0, playerO: 0, ties: 0, currentGameFinished: false },
+  };
+
+  // add new game to games list
+  games.push(newGame);
+
+  // search for new game in games list
+  const game = games.find((game) => game.id === newGame.id);
+  if (!game) {
+    return res.status(400).send("Failed to create new game");
+  }
+
+  res.status(201).json({ game: game });
 });
 
 gameRouter.get("/game/:id/reset", (req, res) => {
