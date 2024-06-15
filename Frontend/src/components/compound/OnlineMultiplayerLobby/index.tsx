@@ -10,6 +10,7 @@ const OnlineMultiplayerLobby = ({ onlinePlayer, setMode }: LobbyProps) => {
       games={games}
       selectedGame={selectedGame}
       handleJoinGame={handleJoinGame}
+      onlinePlayer={onlinePlayer}
     />
   );
 };

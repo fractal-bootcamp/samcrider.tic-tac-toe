@@ -6,10 +6,15 @@ const Component = ({
   games,
   handleJoinGame,
   selectedGame,
+  onlinePlayer,
 }: Fields) => {
   if (selectedGame) {
     return (
-      <OnlineMultiplayerBoard setMode={setMode} selectedGame={selectedGame} />
+      <OnlineMultiplayerBoard
+        setMode={setMode}
+        selectedGame={selectedGame}
+        onlinePlayer={onlinePlayer}
+      />
     );
   }
 

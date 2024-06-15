@@ -7,6 +7,7 @@ export type Fields = {
   games: Game[] | undefined;
   selectedGame: Game | undefined;
   handleJoinGame: (id: string) => void;
+  onlinePlayer: Player;
 };
 
 export type LobbyProps = {
