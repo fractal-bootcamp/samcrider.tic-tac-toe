@@ -63,9 +63,13 @@ gameRouter.post("/game/:id", (req, res) => {
       return res.status(400).send("Game full");
     }
     game.playerO = assertedPlayer;
+    // assign the player's symbol
+    game.playerO.symbol = Symbol.O;
     return res.status(200).json({ game: game });
   }
   game.playerX = assertedPlayer;
+  // assign the player's symbol
+  game.playerX.symbol = Symbol.X;
   // set initial currentPlayer to X
   game.currentPlayer = game.playerX;
   console.log(game);

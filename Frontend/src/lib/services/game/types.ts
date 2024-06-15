@@ -5,7 +5,7 @@ export enum Symbol {
 
 export type Player = {
   name: string;
-  symbol: Symbol;
+  symbol: Symbol | null;
 };
 
 export enum Outcome {
