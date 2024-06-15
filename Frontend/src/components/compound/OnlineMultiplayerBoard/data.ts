@@ -17,12 +17,7 @@ export const useBoardData = (selectedGame: Game, onlinePlayer: Player) => {
   }, [poller]);
 
   const handleClick = async (cell: Cell) => {
-    console.log("current player", game.currentPlayer);
-    console.log("online player", onlinePlayer);
-
     if (game.currentPlayer?.name === onlinePlayer.name) {
-      console.log("passed check");
-
       const data = await gameService().makeGameMove(cell, selectedGame.id);
       setGame(data.game);
     }
