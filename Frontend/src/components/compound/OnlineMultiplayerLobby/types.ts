@@ -8,6 +8,9 @@ export type Fields = {
   selectedGame: Game | undefined;
   handleJoinGame: (id: string) => void;
   onlinePlayer: Player;
+  handleCreateGame: () => Promise<void>;
+  gameTitle: string;
+  setGameTitle: Dispatch<SetStateAction<string>>;
 };
 
 export type LobbyProps = {

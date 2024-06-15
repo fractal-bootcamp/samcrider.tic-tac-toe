@@ -7,6 +7,7 @@ import type { Game, Player } from "../../../lib/services/game/types";
 export const useLobbyData = (onlinePlayer: Player) => {
   const [games, setGames] = useState<Game[] | undefined>(undefined);
   const [selectedGame, setSelectedGame] = useState<Game | undefined>(undefined);
+  const [gameTitle, setGameTitle] = useState<string>("");
 
   const getAllGames = async () => {
     try {
@@ -23,9 +24,28 @@ export const useLobbyData = (onlinePlayer: Player) => {
     setSelectedGame(data.game);
   };
 
+  const handleCreateGame = async () => {
+    console.log("about to await game service");
+
+    console.log(gameTitle);
+    console.log(onlinePlayer);
+
+    const data = await gameService().createGame(onlinePlayer, gameTitle);
+    console.log(data.game);
+
+    setSelectedGame(data.game);
+  };
+
   useEffect(() => {
     getAllGames();
   }, []);
 
-  return { games, handleJoinGame, selectedGame };
+  return {
+    games,
+    handleJoinGame,
+    selectedGame,
+    handleCreateGame,
+    gameTitle,
+    setGameTitle,
+  };
 };

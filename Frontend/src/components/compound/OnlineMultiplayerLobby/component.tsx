@@ -7,6 +7,9 @@ const Component = ({
   handleJoinGame,
   selectedGame,
   onlinePlayer,
+  handleCreateGame,
+  gameTitle,
+  setGameTitle,
 }: Fields) => {
   if (selectedGame) {
     return (
@@ -28,7 +31,27 @@ const Component = ({
       </button>
       <div className="uppercase text-8xl text-white font-extrabold">lobby</div>
 
-      <div className="flex flex-row gap-6 flex-wrap">
+      <div className="flex flex-row gap-6 flex-wrap justify-center">
+        <div className="card w-96 bg-neutral text-neutral-content">
+          <div className="card-body items-center text-center">
+            <input
+              type="text"
+              value={gameTitle}
+              onChange={({ target }) => setGameTitle(target.value)}
+              placeholder="New game"
+              className="input input-bordered w-full max-w-xs"
+            />
+            <div className="card-actions justify-end">
+              <button
+                className="btn btn-primary"
+                disabled={gameTitle ? false : true}
+                onClick={handleCreateGame}
+              >
+                Start
+              </button>
+            </div>
+          </div>
+        </div>
         {games ? (
           games.map((game) => {
             return (
