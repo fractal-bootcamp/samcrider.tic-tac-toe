@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { Player } from "../../../lib/services/game/types";
 
 enum ModeEnum {
   STARTPAGE = 0,
@@ -16,17 +17,6 @@ export type Players = {
   playerO: string;
 };
 
-export type OnlinePlayerInputDto = {
-  name: string;
-};
-
-export type OnlinePlayerOutputDto = {
-  id: string;
-  name: string;
-};
-
-export type OnlinePlayer = OnlinePlayerInputDto | OnlinePlayerOutputDto;
-
 export type Fields = {
   players: Players;
   setPlayers: Dispatch<SetStateAction<Players>>;
@@ -34,6 +24,6 @@ export type Fields = {
   setMode: Dispatch<SetStateAction<Mode>>;
   setDifficulty: Dispatch<SetStateAction<Difficulty>>;
   difficulty: Difficulty;
-  onlinePlayer: OnlinePlayer;
-  setOnlinePlayer: Dispatch<SetStateAction<OnlinePlayer>>;
+  onlinePlayer: Player;
+  setOnlinePlayer: Dispatch<SetStateAction<Player>>;
 };
