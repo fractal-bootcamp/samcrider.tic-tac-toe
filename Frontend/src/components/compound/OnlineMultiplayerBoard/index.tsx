@@ -5,8 +5,12 @@ import { OnlineBoardProps } from "./types";
 const OnlineMultiplayerBoard = ({
   selectedGame,
   setMode,
+  onlinePlayer,
 }: OnlineBoardProps) => {
-  const { handleClick, handleReset, game } = useBoardData(selectedGame);
+  const { handleClick, handleReset, game } = useBoardData(
+    selectedGame,
+    onlinePlayer
+  );
 
   if (game) {
     return (

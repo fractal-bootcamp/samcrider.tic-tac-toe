@@ -1,8 +1,8 @@
-import { Cell, Game } from "../../../lib/services/game/types";
+import { Cell, Game, Player } from "../../../lib/services/game/types";
 import { gameService } from "../../../lib/services/game/service";
 import { useEffect, useState } from "react";
 
-export const useBoardData = (selectedGame: Game) => {
+export const useBoardData = (selectedGame: Game, onlinePlayer: Player) => {
   const [game, setGame] = useState<Game>(selectedGame);
   const [poller, setPoller] = useState<number>(0);
 
@@ -17,8 +17,10 @@ export const useBoardData = (selectedGame: Game) => {
   }, [poller]);
 
   const handleClick = async (cell: Cell) => {
-    const data = await gameService().makeGameMove(cell, selectedGame.id);
-    setGame(data.game);
+    if (game.currentPlayer?.name === onlinePlayer.name) {
+      const data = await gameService().makeGameMove(cell, selectedGame.id);
+      setGame(data.game);
+    }
   };
 
   const handleReset = async (id: string) => {
