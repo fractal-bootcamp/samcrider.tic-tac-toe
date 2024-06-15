@@ -31,10 +31,8 @@ gameRouter.get("/", (_req, res) => {
 });
 
 gameRouter.get("/game/:id", (req, res) => {
-  // grab id from request
-  const id = Number(req.params.id);
   // grab game based on id
-  const game = games[id];
+  const game = games.find((game) => game.id === req.params.id);
   // game found check
   if (!game) {
     return res.status(404).send("Game not found");
@@ -44,10 +42,8 @@ gameRouter.get("/game/:id", (req, res) => {
 });
 
 gameRouter.post("/game/:id/move", (req, res) => {
-  // grab game id
-  const id = Number(req.params.id);
   // grab game based on id
-  const game = games[id];
+  const game = games.find((game) => game.id === req.params.id);
   // game found check
   if (!game) {
     return res.status(404).send("Game not found");
