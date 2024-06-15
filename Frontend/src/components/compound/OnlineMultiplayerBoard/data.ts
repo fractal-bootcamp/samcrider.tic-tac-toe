@@ -1,9 +1,21 @@
 import { Cell, Game } from "../../../lib/services/game/types";
 import { gameService } from "../../../lib/services/game/service";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const useBoardData = (selectedGame: Game) => {
   const [game, setGame] = useState<Game>(selectedGame);
+  const [poller, setPoller] = useState<number>(0);
+
+  useEffect(() => {
+    const unsubscribe = async () => {
+      const data = await gameService().hydrateGame(game.id);
+      setGame(data.game);
+    };
+    unsubscribe();
+
+    setTimeout(() => setPoller(poller + 1), 1000);
+  }, [poller]);
+
   const handleClick = async (cell: Cell) => {
     const data = await gameService().makeGameMove(cell, selectedGame.id);
     setGame(data.game);

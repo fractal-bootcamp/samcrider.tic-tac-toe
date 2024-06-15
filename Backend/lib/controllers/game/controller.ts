@@ -31,6 +31,16 @@ gameRouter.get("/", (_req, res) => {
   res.status(200).json({ games: games });
 });
 
+gameRouter.get("/game/:id", (req, res) => {
+  // grab game based on id
+  const game = games.find((game) => game.id === req.params.id);
+  // game found check
+  if (!game) {
+    return res.status(404).send("Game not found");
+  }
+  res.status(200).json({ game: game });
+});
+
 gameRouter.post("/game/:id", (req, res) => {
   // grab game based on id
   const game = games.find((game) => game.id === req.params.id);

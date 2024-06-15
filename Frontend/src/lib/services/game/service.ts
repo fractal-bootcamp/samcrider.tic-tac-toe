@@ -10,6 +10,7 @@ export interface GameApi {
   createGame: () => Promise<any>;
   makeGameMove: (cell: Cell, id: string) => Promise<any>;
   resetGameBoard: (id: string) => Promise<any>;
+  hydrateGame: (id: string) => Promise<any>;
   removeGame: () => Promise<any>;
 }
 
@@ -19,6 +20,14 @@ export const gameService: GameService = () => ({
   getAllGames: async () => {
     try {
       const res = await axios.get(`${baseUrl}`);
+      return res.data;
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  hydrateGame: async (id: string) => {
+    try {
+      const res = await axios.get(`${baseUrl}/game/${id}`);
       return res.data;
     } catch (e) {
       console.error(e);
