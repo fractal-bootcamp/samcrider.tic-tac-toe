@@ -108,9 +108,9 @@ gameRouter.post("/game/:id/move", (req, res) => {
     return res.status(404).send("Game not found");
   }
 
-  // destructure index from request body
+  // destructure cell from request body
   const { cell } = req.body;
-  // assert index type
+  // assert cell type
   if (typeof cell !== "object") {
     res.status(400).json({ error: "Must select cell on the board" });
     throw new Error("cell is not of type number");
