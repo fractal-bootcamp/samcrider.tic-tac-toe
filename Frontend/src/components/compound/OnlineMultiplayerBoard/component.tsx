@@ -46,7 +46,7 @@ const Component = ({
           <div>{game.winState.playerO}</div>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center gap-4">
+      <div className="flex flex-row items-center gap-4">
         <button
           onClick={handleLeaveGame}
           className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"

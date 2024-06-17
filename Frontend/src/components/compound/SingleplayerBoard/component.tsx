@@ -11,12 +11,6 @@ const Component = ({
 }: Fields) => {
   return (
     <div className="flex flex-col items-center">
-      <button
-        onClick={() => setMode(0)}
-        className="btn btn-warning top-20 absolute left-20"
-      >
-        Home
-      </button>
       <div className={s.boardContainer}>
         {board.map((cell, i) => (
           <button
@@ -46,13 +40,21 @@ const Component = ({
           <div>{gameState.winner.playerO}</div>
         </div>
       </div>
-      <button
-        className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
-        onClick={handleReset}
-        disabled={gameState.currentGameFinished ? false : true}
-      >
-        play again
-      </button>
+      <div className="flex flex-row items-center gap-4">
+        <button
+          onClick={() => setMode(0)}
+          className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
+        >
+          Home
+        </button>
+        <button
+          className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
+          onClick={handleReset}
+          disabled={gameState.currentGameFinished ? false : true}
+        >
+          play again
+        </button>
+      </div>
     </div>
   );
 };

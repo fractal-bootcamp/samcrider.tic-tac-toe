@@ -40,7 +40,7 @@ const Component = ({
           <div>{gameState.winner.playerO}</div>
         </div>
       </div>
-      <div className="flex flex-row items-center justify-center gap-4">
+      <div className="flex flex-row items-center gap-4">
         <button
           onClick={() => setMode(0)}
           className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
