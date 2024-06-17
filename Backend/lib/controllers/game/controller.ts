@@ -1,213 +1,330 @@
 import express from "express";
 import { Game, Player, Symbol } from "./types";
 import { checkWinner } from "../../../utils/checkWinner";
+import client from "../../../utils/client";
+import { JsonObject } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 
 const gameRouter = express.Router();
 
-// default game list
-let games: Game[] = [
-  {
-    id: "1",
-    name: "Admin's Game",
-    board: [
-      { id: 0, value: null },
-      { id: 1, value: null },
-      { id: 2, value: null },
-      { id: 3, value: null },
-      { id: 4, value: null },
-      { id: 5, value: null },
-      { id: 6, value: null },
-      { id: 7, value: null },
-      { id: 8, value: null },
-    ],
-    currentPlayer: null,
-    playerX: null,
-    playerO: null,
-    winState: { playerX: 0, playerO: 0, ties: 0, currentGameFinished: false },
-  },
-];
-
-gameRouter.get("/", (_req, res) => {
-  games.forEach((game) => {
-    // if both players left the game, remove it
-    if (!game.playerX && !game.playerO) {
-      const filteredGames = games.filter((g) => g.id !== game.id);
-      games = filteredGames;
-    }
+gameRouter.get("/", async (_req, res) => {
+  // if a game has no players, delete it
+  await client.game.deleteMany({
+    where: {
+      playerO: { equals: Prisma.JsonNull },
+      playerX: { equals: Prisma.JsonNull },
+    },
   });
+  // get all the games and return them
+  const games = await client.game.findMany();
   res.status(200).json({ games: games });
 });
 
-gameRouter.get("/game/:id", (req, res) => {
-  // grab game based on id
-  const game = games.find((game) => game.id === req.params.id);
-  // game found check
-  if (!game) {
+gameRouter.get("/game/:id", async (req, res) => {
+  try {
+    // get game by id
+    const game = await client.game.findUnique({
+      where: {
+        id: req.params.id,
+      },
+    });
+    // return it
+    res.status(200).json({ game: game });
+  } catch (e) {
+    console.error(e);
     return res.status(400).json({ error: "game not found" });
   }
-  res.status(200).json({ game: game });
 });
 
-gameRouter.post("/game/:id", (req, res) => {
-  // grab game based on id
-  const game = games.find((game) => game.id === req.params.id);
-  // game found check
-  if (!game) {
-    return res.status(400).json({ error: "game not found" });
-  }
-
-  // destructure player from request
-  const { player } = req.body;
-  // assert player type
-  const assertedPlayer = player as Player;
-
-  // assign the player to the game
-  if (game.playerX) {
-    if (game.playerO) {
-      return res.status(400).json({ error: "Game full" });
+gameRouter.post("/game/:id", async (req, res) => {
+  try {
+    // get game by id
+    const game = await client.game.findUnique({
+      where: {
+        id: req.params.id,
+      },
+    });
+    // if not found, return
+    if (!game) {
+      return res.status(400).json({ error: "game not found" });
     }
-    game.playerO = assertedPlayer;
-    // assign the player's symbol
-    game.playerO.symbol = Symbol.O;
-    return res.status(200).json({ game: game });
+
+    // destructure player from request
+    const { player } = req.body;
+    // assert player type
+    const assertedPlayer = player as Player;
+
+    if (game.playerX) {
+      if (game.playerO) {
+        // if both players in game, game is full
+        return res.status(400).json({ error: "Game full" });
+      }
+      // if player x in game but not player o, add player o
+      const updatedGame = await client.game.update({
+        where: {
+          id: req.params.id,
+        },
+        data: {
+          playerO: {
+            name: assertedPlayer.name,
+            symbol: Symbol.O,
+          } as JsonObject,
+        },
+      });
+      return res.status(200).json({ game: updatedGame });
+    }
+    // if no player x, add player x
+    const updatedGame = await client.game.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        playerX: { name: assertedPlayer.name, symbol: Symbol.X } as JsonObject,
+      },
+    });
+    // return game
+    return res.status(200).json({ game: updatedGame });
+  } catch (e) {
+    console.error(e);
+    return res
+      .status(400)
+      .json({ error: "possible errors: finding game, updating player x/o" });
   }
-  game.playerX = assertedPlayer;
-  // assign the player's symbol
-  game.playerX.symbol = Symbol.X;
-  // set initial currentPlayer to X
-  game.currentPlayer = game.playerX;
-  res.status(200).json({ game: game });
 });
 
-gameRouter.post("/create", (req, res) => {
+gameRouter.post("/create", async (req, res) => {
   // destructure player and game title from request
   const { player, gameTitle } = req.body;
   // assert player type
   const assertedPlayer = player as Player;
   const assertedGameTitle = gameTitle as string;
 
-  // build new game
-  const newGame = {
-    id: String(games.length + 1),
-    name: assertedGameTitle,
-    board: [
-      { id: 0, value: null },
-      { id: 1, value: null },
-      { id: 2, value: null },
-      { id: 3, value: null },
-      { id: 4, value: null },
-      { id: 5, value: null },
-      { id: 6, value: null },
-      { id: 7, value: null },
-      { id: 8, value: null },
-    ],
-    currentPlayer: assertedPlayer,
-    playerX: assertedPlayer,
-    playerO: null,
-    winState: { playerX: 0, playerO: 0, ties: 0, currentGameFinished: false },
-  };
-
-  newGame.currentPlayer.symbol = Symbol.X;
-  newGame.playerX.symbol = Symbol.X;
-
-  // add new game to games list
-  games.push(newGame);
-
-  // search for new game in games list
-  const game = games.find((game) => game.id === newGame.id);
-  if (!game) {
-    return res.status(400).json({ error: "Failed to create new game" });
+  try {
+    // try to create new game
+    const newGame = await client.game.create({
+      data: {
+        name: assertedGameTitle,
+        board: [
+          { id: 0, value: null },
+          { id: 1, value: null },
+          { id: 2, value: null },
+          { id: 3, value: null },
+          { id: 4, value: null },
+          { id: 5, value: null },
+          { id: 6, value: null },
+          { id: 7, value: null },
+          { id: 8, value: null },
+        ],
+        currentPlayer: {
+          name: assertedPlayer.name,
+          symbol: Symbol.X,
+        } as JsonObject,
+        playerX: { name: assertedPlayer.name, symbol: Symbol.X } as JsonObject,
+        playerO: Prisma.JsonNull,
+        winState: {
+          playerX: 0,
+          playerO: 0,
+          ties: 0,
+          currentGameFinished: false,
+        } as JsonObject,
+      },
+    });
+    return res.status(201).json({ game: newGame });
+  } catch (e) {
+    console.error(e);
+    return res.status(400).json({ error: "Couldn't create game" });
   }
-
-  res.status(201).json({ game: game });
 });
 
-gameRouter.get("/game/:id/reset", (req, res) => {
-  const game = games.find((game) => game.id === req.params.id);
+gameRouter.get("/game/:id/reset", async (req, res) => {
+  try {
+    // try to grab the current game
+    const game = await client.game.findUnique({
+      where: {
+        id: req.params.id,
+      },
+    });
+    // if not found, error
+    if (!game) {
+      return res.status(400).json({ error: "game not found" });
+    }
 
-  if (!game) {
-    return res.status(400).json({ error: "game not found" });
+    // try to reset the game board
+    const updatedGame = await client.game.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        board: [
+          { id: 0, value: null },
+          { id: 1, value: null },
+          { id: 2, value: null },
+          { id: 3, value: null },
+          { id: 4, value: null },
+          { id: 5, value: null },
+          { id: 6, value: null },
+          { id: 7, value: null },
+          { id: 8, value: null },
+        ],
+        winState: {
+          currentGameFinished: false,
+        },
+        currentPlayer: game.playerX as JsonObject,
+      },
+    });
+    // return the updated game
+    return res.status(200).json({ game: updatedGame });
+  } catch (e) {
+    console.error(e);
+    return res.status(400).json({ error: "game couldn't be reset" });
   }
-
-  game.board = [
-    { id: 0, value: null },
-    { id: 1, value: null },
-    { id: 2, value: null },
-    { id: 3, value: null },
-    { id: 4, value: null },
-    { id: 5, value: null },
-    { id: 6, value: null },
-    { id: 7, value: null },
-    { id: 8, value: null },
-  ];
-  game.winState.currentGameFinished = false;
-  game.currentPlayer = game.playerX;
-
-  res.status(200).json({ game: game });
 });
 
-gameRouter.post("/game/:id/leave", (req, res) => {
-  const { player } = req.body;
-  // grab game based on id
-  const game = games.find((game) => game.id === req.params.id);
-  // game found check
-  if (!game) {
-    return res.status(400).json({ error: "game not found" });
-  }
+gameRouter.post("/game/:id/leave", async (req, res) => {
+  try {
+    // destructure player trying to leave
+    const { player } = req.body;
+    // grab game based on id
+    const game = await client.game.findUnique({
+      where: {
+        id: req.params.id,
+      },
+    });
+    // game found check
+    if (!game) {
+      return res.status(400).json({ error: "game not found" });
+    }
 
-  if (game.playerO?.name === player.name) {
-    game.playerO = null;
-    return res.status(200).json({ message: "player left game" });
+    // assert players from the database
+    const playerO = game.playerO as JsonObject;
+    const playerX = game.playerX as JsonObject;
+
+    // if player O is trying to leave
+
+    if (playerO && playerO.name === player.name) {
+      // remove them from game
+      await client.game.update({
+        where: {
+          id: req.params.id,
+        },
+        data: {
+          playerO: Prisma.JsonNull,
+        },
+      });
+      return res.status(200).json({ message: "player left game" });
+    }
+    // if player X is trying to leave
+    if (playerX && playerX.name === player.name) {
+      // remove them from the game
+      await client.game.update({
+        where: {
+          id: req.params.id,
+        },
+        data: {
+          playerX: Prisma.JsonNull,
+        },
+      });
+      return res.status(200).json({ message: "player left game" });
+    }
+    // if neither player is trying to leave, something bad happened...
+    return res.status(400).json("player couldn't be removed from the game");
+  } catch (e) {
+    console.error(e);
+    return res.status(400).json({ error: "couldn't remove player from game" });
   }
-  if (game.playerX?.name === player.name) {
-    game.playerX = null;
-    return res.status(200).json({ message: "player left game" });
-  }
-  return res.status(400).json("player couldn't be removed from the game");
 });
 
-gameRouter.post("/game/:id/move", (req, res) => {
-  // grab game based on id
-  const game = games.find((game) => game.id === req.params.id);
-  // game found check
-  if (!game) {
-    return res.status(400).json({ error: "game not found" });
+gameRouter.post("/game/:id/move", async (req, res) => {
+  try {
+    // grab game based on id
+    const game = await client.game.findUnique({
+      where: {
+        id: req.params.id,
+      },
+    });
+    // game found check
+    if (!game) {
+      return res.status(400).json({ error: "game not found" });
+    }
+
+    // destructure cell from request body
+    const { cell } = req.body;
+    // assert cell type
+    if (typeof cell !== "object") {
+      res.status(400).json({ error: "Must select cell on the board" });
+      throw new Error("cell is not of type object");
+    }
+
+    // assert board and current player
+    const board = game.board as JsonObject[];
+    const currentPlayer = game.currentPlayer as JsonObject;
+    // set board cell to current player symbol
+    if (board[cell.id].value !== null) {
+      return res.status(400).json({ error: "Spot taken" });
+    }
+
+    const updatedBoard = board.map((b) => {
+      if (b.id === cell.id) {
+        return { id: cell.id, value: currentPlayer.symbol };
+      }
+      return b;
+    });
+
+    const updatedGame: JsonObject = await client.game.update({
+      where: {
+        id: req.params.id,
+      },
+      data: {
+        board: updatedBoard,
+      },
+    });
+
+    // call check winner, assert game
+    checkWinner(updatedGame as Game);
+
+    // grab the potentially updated game
+    const potentiallyUpdatedGame: JsonObject | null =
+      await client.game.findUnique({
+        where: {
+          id: req.params.id,
+        },
+      });
+    if (!potentiallyUpdatedGame) {
+      return res.status(400).json({ error: "game not found" });
+    }
+
+    // assert the winState
+    const winState = potentiallyUpdatedGame.winState as JsonObject;
+
+    // if the game is finished, return
+    if (winState.currentGameFinished) {
+      return res.status(200).json({ game: potentiallyUpdatedGame });
+    }
+    // else, toggle current player
+    const gameAfterToggleTurn =
+      currentPlayer.symbol === Symbol.X
+        ? await client.game.update({
+            where: {
+              id: req.params.id,
+            },
+            data: {
+              currentPlayer: potentiallyUpdatedGame.playerO as JsonObject,
+            },
+          })
+        : await client.game.update({
+            where: {
+              id: req.params.id,
+            },
+            data: {
+              currentPlayer: potentiallyUpdatedGame.playerX as JsonObject,
+            },
+          });
+    // return toggled game
+    res.status(200).json({ game: gameAfterToggleTurn });
+  } catch (e) {
+    console.error(e);
+    return res.status(400).json({ error: "Current move couldn't be made" });
   }
-
-  // destructure cell from request body
-  const { cell } = req.body;
-  // assert cell type
-  if (typeof cell !== "object") {
-    res.status(400).json({ error: "Must select cell on the board" });
-    throw new Error("cell is not of type number");
-  }
-
-  // grab current player
-  const currPlayer = game.currentPlayer;
-  if (!currPlayer) {
-    return res.status(400).json({ error: "no current player!" });
-  }
-
-  // set board cell to current player symbol
-  if (game.board[cell.id].value !== null) {
-    return res.status(400).json({ error: "Spot taken" });
-  }
-
-  game.board[cell.id].value = currPlayer.symbol;
-
-  // call check winner
-
-  checkWinner(game);
-
-  if (game.winState.currentGameFinished) {
-    return res.status(200).json({ game: game });
-  }
-  // toggle current player
-  game.currentPlayer =
-    currPlayer.symbol === Symbol.X ? game.playerO : game.playerX;
-
-  // return updated game
-  res.status(200).json({ game: game });
 });
 
 export default gameRouter;
