@@ -9,12 +9,6 @@ const Component = ({
 }: Fields) => {
   return (
     <div className="flex flex-col items-center">
-      <button
-        onClick={handleLeaveGame}
-        className="btn btn-warning top-20 absolute left-20"
-      >
-        Lobby
-      </button>
       <div className={s.boardContainer}>
         {game.board.map((cell, i) => (
           <button
@@ -52,13 +46,21 @@ const Component = ({
           <div>{game.winState.playerO}</div>
         </div>
       </div>
-      <button
-        className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
-        onClick={handleReset}
-        disabled={game.winState.currentGameFinished ? false : true}
-      >
-        play again
-      </button>
+      <div className="flex flex-row items-center gap-4">
+        <button
+          onClick={handleLeaveGame}
+          className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
+        >
+          Lobby
+        </button>
+        <button
+          className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
+          onClick={handleReset}
+          disabled={game.winState.currentGameFinished ? false : true}
+        >
+          play again
+        </button>
+      </div>
     </div>
   );
 };
