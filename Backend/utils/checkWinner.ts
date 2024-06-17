@@ -1,5 +1,7 @@
+import { JsonObject } from "@prisma/client/runtime/library";
 import type { Game } from "../lib/controllers/game/types";
 import { Symbol } from "../lib/controllers/game/types";
+import client from "./client";
 
 export const checkWinner = (game: Game) => {
   const possibleWinPositions: (Symbol | null)[][] = [
@@ -13,7 +15,7 @@ export const checkWinner = (game: Game) => {
     [game.board[2].value, game.board[4].value, game.board[6].value],
   ];
 
-  possibleWinPositions.forEach((possibleWinPosition) => {
+  possibleWinPositions.forEach(async (possibleWinPosition) => {
     // loop through each possibility
     const currentGameState = possibleWinPosition.reduce((curr, acc) => {
       // if current value is null, there is no win in current possibility
@@ -27,7 +29,21 @@ export const checkWinner = (game: Game) => {
     });
 
     // if the game is finished, we need to skip the rest of the possible win positions and return
-    if (game.winState.currentGameFinished) {
+    // grab game
+    const potentiallyUpdatedGame: JsonObject | null =
+      await client.game.findUnique({
+        where: {
+          id: game.id,
+        },
+      });
+    // if error grabbing game, throw an error
+    if (!potentiallyUpdatedGame) {
+      throw new Error("couldn't find game");
+    }
+    // assert the winState
+    const winState = potentiallyUpdatedGame.winState as JsonObject;
+    // if the game is finished, return
+    if (winState.currentGameFinished) {
       return;
     }
 
@@ -35,8 +51,17 @@ export const checkWinner = (game: Game) => {
     if (!currentGameState) {
       // if the board is full
       if (!game.board.find((cell) => !cell.value)) {
-        game.winState.currentGameFinished = true;
-        game.winState.ties++;
+        await client.game.update({
+          where: {
+            id: game.id,
+          },
+          data: {
+            winState: {
+              currentGameFinished: true,
+              ties: game.winState.ties + 1,
+            },
+          },
+        });
         return;
       }
       // just return if board isn't full
@@ -45,14 +70,32 @@ export const checkWinner = (game: Game) => {
 
     // if win condition found, set accordingly
     if (currentGameState === Symbol.X) {
-      game.winState.currentGameFinished = true;
-      game.winState.playerX++;
+      await client.game.update({
+        where: {
+          id: game.id,
+        },
+        data: {
+          winState: {
+            currentGameFinished: true,
+            playerX: game.winState.playerX + 1,
+          },
+        },
+      });
       return;
     }
 
     if (currentGameState === Symbol.O) {
-      game.winState.currentGameFinished = true;
-      game.winState.playerO++;
+      await client.game.update({
+        where: {
+          id: game.id,
+        },
+        data: {
+          winState: {
+            currentGameFinished: true,
+            playerO: game.winState.playerO + 1,
+          },
+        },
+      });
       return;
     }
   });

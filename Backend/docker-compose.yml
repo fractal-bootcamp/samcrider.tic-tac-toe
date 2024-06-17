@@ -1,6 +1,6 @@
 version: "3.9"
 services:
-  survey-app-postgres2:
+  tic-tac-toe:
     image: postgres:13
     environment:
       POSTGRES_USER: postgres
