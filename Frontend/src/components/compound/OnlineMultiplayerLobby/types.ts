@@ -11,6 +11,7 @@ export type Fields = {
   handleCreateGame: () => Promise<void>;
   gameTitle: string;
   setGameTitle: Dispatch<SetStateAction<string>>;
+  setSelectedGame: Dispatch<SetStateAction<Game | undefined>>;
 };
 
 export type LobbyProps = {

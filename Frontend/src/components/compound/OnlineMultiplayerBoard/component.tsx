@@ -1,11 +1,16 @@
 import { Fields } from "./types";
 import s from "./styles.module.css";
 
-const Component = ({ handleClick, handleReset, setMode, game }: Fields) => {
+const Component = ({
+  handleClick,
+  handleLeaveGame,
+  handleReset,
+  game,
+}: Fields) => {
   return (
     <div className="flex flex-col items-center">
       <button
-        onClick={() => setMode(3)}
+        onClick={handleLeaveGame}
         className="btn btn-warning top-20 absolute left-20"
       >
         Lobby
@@ -49,7 +54,7 @@ const Component = ({ handleClick, handleReset, setMode, game }: Fields) => {
       </div>
       <button
         className="btn btn-wide h-fit btn-warning font-bold text-2xl uppercase"
-        onClick={() => handleReset(game.id)}
+        onClick={handleReset}
         disabled={game.winState.currentGameFinished ? false : true}
       >
         play again

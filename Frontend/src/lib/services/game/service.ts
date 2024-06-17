@@ -11,6 +11,7 @@ export interface GameApi {
   makeGameMove: (cell: Cell, id: string) => Promise<any>;
   resetGameBoard: (id: string) => Promise<any>;
   hydrateGame: (id: string) => Promise<any>;
+  leaveGame: (id: string, player: Player) => Promise<any>;
   removeGame: () => Promise<any>;
 }
 
@@ -66,6 +67,16 @@ export const gameService: GameService = () => ({
     try {
       const res = await axios.get(`${baseUrl}/game/${id}/reset`);
       return res.data;
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  leaveGame: async (id: string, player: Player) => {
+    try {
+      await axios.post(`${baseUrl}/game/${id}/leave`, {
+        player: player,
+      });
+      return;
     } catch (e) {
       console.error(e);
     }
