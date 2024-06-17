@@ -24,14 +24,15 @@ const Component = ({
   }
 
   return (
-    <div className="h-[100vh] flex flex-col gap-36 p-10">
-      <button
-        onClick={() => setMode(0)}
-        className="btn btn-warning top-20 absolute left-20"
-      >
-        Home
-      </button>
-      <div className="uppercase text-8xl text-white font-extrabold">lobby</div>
+    <div className="h-[100vh] flex flex-col gap-24 p-10">
+      <div className="flex flex-row items-center gap-10">
+        <div className="uppercase text-8xl text-white font-extrabold">
+          lobby
+        </div>
+        <button onClick={() => setMode(0)} className="btn btn-warning">
+          Home
+        </button>
+      </div>
 
       <div className="flex flex-row gap-6 flex-wrap justify-center">
         <div className="card w-96 bg-neutral text-neutral-content">
