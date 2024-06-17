@@ -7,7 +7,7 @@ const gameRouter = express.Router();
 // default game list
 let games: Game[] = [
   {
-    id: "0",
+    id: "1",
     name: "Admin's Game",
     board: [
       { id: 0, value: null },
@@ -28,6 +28,16 @@ let games: Game[] = [
 ];
 
 gameRouter.get("/", (_req, res) => {
+  games.forEach((game) => {
+    // if both players left the game, remove it
+    if (!game.playerX && !game.playerO) {
+      console.log("no players, about to remove game");
+
+      const filteredGames = games.filter((g) => g.id !== game.id);
+      games = filteredGames;
+      console.log("game was removed");
+    }
+  });
   res.status(200).json({ games: games });
 });
 
@@ -36,7 +46,7 @@ gameRouter.get("/game/:id", (req, res) => {
   const game = games.find((game) => game.id === req.params.id);
   // game found check
   if (!game) {
-    return res.status(404).send("Game not found");
+    return res.status(400).json({ error: "game not found" });
   }
   res.status(200).json({ game: game });
 });
@@ -46,7 +56,7 @@ gameRouter.post("/game/:id", (req, res) => {
   const game = games.find((game) => game.id === req.params.id);
   // game found check
   if (!game) {
-    return res.status(404).send("Game not found");
+    return res.status(400).json({ error: "game not found" });
   }
 
   // destructure player from request
@@ -57,7 +67,7 @@ gameRouter.post("/game/:id", (req, res) => {
   // assign the player to the game
   if (game.playerX) {
     if (game.playerO) {
-      return res.status(400).send("Game full");
+      return res.status(400).json({ error: "Game full" });
     }
     game.playerO = assertedPlayer;
     // assign the player's symbol
@@ -94,11 +104,14 @@ gameRouter.post("/create", (req, res) => {
       { id: 7, value: null },
       { id: 8, value: null },
     ],
-    currentPlayer: null,
+    currentPlayer: assertedPlayer,
     playerX: assertedPlayer,
     playerO: null,
     winState: { playerX: 0, playerO: 0, ties: 0, currentGameFinished: false },
   };
+
+  newGame.currentPlayer.symbol = Symbol.X;
+  newGame.playerX.symbol = Symbol.X;
 
   // add new game to games list
   games.push(newGame);
@@ -106,7 +119,7 @@ gameRouter.post("/create", (req, res) => {
   // search for new game in games list
   const game = games.find((game) => game.id === newGame.id);
   if (!game) {
-    return res.status(400).send("Failed to create new game");
+    return res.status(400).json({ error: "Failed to create new game" });
   }
 
   res.status(201).json({ game: game });
@@ -116,7 +129,7 @@ gameRouter.get("/game/:id/reset", (req, res) => {
   const game = games.find((game) => game.id === req.params.id);
 
   if (!game) {
-    return res.status(404).send("Game not found");
+    return res.status(400).json({ error: "game not found" });
   }
 
   game.board = [
@@ -142,10 +155,8 @@ gameRouter.post("/game/:id/leave", (req, res) => {
   const game = games.find((game) => game.id === req.params.id);
   // game found check
   if (!game) {
-    return res.status(404).send("Game not found");
+    return res.status(400).json({ error: "game not found" });
   }
-
-  console.log(game);
 
   if (game.playerO?.name === player.name) {
     game.playerO = null;
@@ -155,7 +166,7 @@ gameRouter.post("/game/:id/leave", (req, res) => {
     game.playerX = null;
     return res.status(200).json({ message: "player left game" });
   }
-  return res.status(400).send("player couldn't be removed from the game");
+  return res.status(400).json("player couldn't be removed from the game");
 });
 
 gameRouter.post("/game/:id/move", (req, res) => {
@@ -163,7 +174,7 @@ gameRouter.post("/game/:id/move", (req, res) => {
   const game = games.find((game) => game.id === req.params.id);
   // game found check
   if (!game) {
-    return res.status(404).send("Game not found");
+    return res.status(400).json({ error: "game not found" });
   }
 
   // destructure cell from request body
@@ -177,13 +188,18 @@ gameRouter.post("/game/:id/move", (req, res) => {
   // grab current player
   const currPlayer = game.currentPlayer;
   if (!currPlayer) {
-    return res.status(400).send("no current player!");
+    return res.status(400).json({ error: "no current player!" });
   }
+  console.log("game board before move", game.board);
+
   // set board cell to current player symbol
   if (game.board[cell.id].value !== null) {
-    return res.status(400).send("Spot taken");
+    return res.status(400).json({ error: "Spot taken" });
   }
+  console.log("current player", currPlayer);
+
   game.board[cell.id].value = currPlayer.symbol;
+  console.log("game board after move", game.board);
 
   // call check winner
   console.log("about to check winner");

@@ -12,7 +12,6 @@ export interface GameApi {
   resetGameBoard: (id: string) => Promise<any>;
   hydrateGame: (id: string) => Promise<any>;
   leaveGame: (id: string, player: Player) => Promise<any>;
-  removeGame: () => Promise<any>;
 }
 
 type GameService = () => GameApi;
@@ -81,5 +80,4 @@ export const gameService: GameService = () => ({
       console.error(e);
     }
   },
-  removeGame: async () => {},
 });

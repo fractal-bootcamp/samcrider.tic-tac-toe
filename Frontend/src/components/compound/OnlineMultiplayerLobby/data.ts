@@ -8,6 +8,7 @@ export const useLobbyData = (onlinePlayer: Player) => {
   const [games, setGames] = useState<Game[] | undefined>(undefined);
   const [selectedGame, setSelectedGame] = useState<Game | undefined>(undefined);
   const [gameTitle, setGameTitle] = useState<string>("");
+  const [poller, setPoller] = useState<number>(0);
 
   const getAllGames = async () => {
     try {
@@ -38,7 +39,9 @@ export const useLobbyData = (onlinePlayer: Player) => {
 
   useEffect(() => {
     getAllGames();
-  }, []);
+
+    setTimeout(() => setPoller(poller + 1), 1000);
+  }, [poller]);
 
   return {
     games,
