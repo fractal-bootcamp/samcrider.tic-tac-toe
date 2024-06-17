@@ -21,8 +21,8 @@ model Game {
   name              String
   board             Json[]
   currentPlayer     Json
-  playerX           Json?
-  playerO           Json?
+  playerX           Json
+  playerO           Json
   winState          Json
 
   @@map("game")

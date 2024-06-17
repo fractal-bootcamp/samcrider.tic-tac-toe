@@ -3,6 +3,7 @@ import { Game, Player, Symbol } from "./types";
 import { checkWinner } from "../../../utils/checkWinner";
 import client from "../../../utils/client";
 import { JsonObject } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 
 const gameRouter = express.Router();
 
@@ -10,8 +11,8 @@ gameRouter.get("/", async (_req, res) => {
   // if a game has no players, delete it
   await client.game.deleteMany({
     where: {
-      playerO: undefined,
-      playerX: undefined,
+      playerO: { equals: Prisma.JsonNull },
+      playerX: { equals: Prisma.JsonNull },
     },
   });
   // get all the games and return them
@@ -119,7 +120,7 @@ gameRouter.post("/create", async (req, res) => {
           symbol: Symbol.X,
         } as JsonObject,
         playerX: { name: assertedPlayer.name, symbol: Symbol.X } as JsonObject,
-        playerO: undefined,
+        playerO: Prisma.JsonNull,
         winState: {
           playerX: 0,
           playerO: 0,
@@ -197,28 +198,30 @@ gameRouter.post("/game/:id/leave", async (req, res) => {
     // assert players from the database
     const playerO = game.playerO as JsonObject;
     const playerX = game.playerX as JsonObject;
+
     // if player O is trying to leave
-    if (playerO.name === player.name) {
+
+    if (playerO && playerO.name === player.name) {
       // remove them from game
       await client.game.update({
         where: {
           id: req.params.id,
         },
         data: {
-          playerO: undefined,
+          playerO: Prisma.JsonNull,
         },
       });
       return res.status(200).json({ message: "player left game" });
     }
     // if player X is trying to leave
-    if (playerX.name === player.name) {
+    if (playerX && playerX.name === player.name) {
       // remove them from the game
       await client.game.update({
         where: {
           id: req.params.id,
         },
         data: {
-          playerX: undefined,
+          playerX: Prisma.JsonNull,
         },
       });
       return res.status(200).json({ message: "player left game" });
