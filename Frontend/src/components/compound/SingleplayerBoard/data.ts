@@ -27,8 +27,6 @@ export const useBoardData = () => {
   const [score, setScore] = useState<number>(0);
 
   const checkWinner = () => {
-    console.log("Check Winner");
-
     setGameState({ ...gameState, mostRecentWinner: null });
 
     possibleWinPositions.forEach((possibleWinPosition) => {
@@ -48,10 +46,6 @@ export const useBoardData = () => {
       if (!currentGameState) {
         // if the board is full
         if (board.every((cell) => cell.value !== null)) {
-          console.log("board in full board check", board);
-
-          console.log("board is apparently full...");
-
           return setGameState({
             ...gameState,
             ties: gameState.ties + 1,
@@ -172,18 +166,12 @@ export const useBoardData = () => {
   ];
 
   useEffect(() => {
-    console.log(gameState);
-
     checkWinner();
   }, [board]);
 
   useEffect(() => {
-    console.log("whose turn?", turn);
     if (turn === TurnEnum.O) {
-      console.log("Agent turn starting");
-
       const boardIndex = miniMax(board, true);
-      console.log("best spot (button index) for agent", boardIndex);
 
       const newBoard = board.map((currCell) => {
         if (currCell.id === boardIndex) {

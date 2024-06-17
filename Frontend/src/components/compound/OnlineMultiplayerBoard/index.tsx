@@ -32,7 +32,6 @@ const OnlineMultiplayerBoard = ({
       </div>
       <button
         onClick={() => {
-          console.log("hereski");
           setMode(3);
         }}
         className="btn btn-wide btn-warning"

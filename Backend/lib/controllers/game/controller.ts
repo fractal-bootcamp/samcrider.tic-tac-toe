@@ -31,11 +31,8 @@ gameRouter.get("/", (_req, res) => {
   games.forEach((game) => {
     // if both players left the game, remove it
     if (!game.playerX && !game.playerO) {
-      console.log("no players, about to remove game");
-
       const filteredGames = games.filter((g) => g.id !== game.id);
       games = filteredGames;
-      console.log("game was removed");
     }
   });
   res.status(200).json({ games: games });
@@ -190,19 +187,15 @@ gameRouter.post("/game/:id/move", (req, res) => {
   if (!currPlayer) {
     return res.status(400).json({ error: "no current player!" });
   }
-  console.log("game board before move", game.board);
 
   // set board cell to current player symbol
   if (game.board[cell.id].value !== null) {
     return res.status(400).json({ error: "Spot taken" });
   }
-  console.log("current player", currPlayer);
 
   game.board[cell.id].value = currPlayer.symbol;
-  console.log("game board after move", game.board);
 
   // call check winner
-  console.log("about to check winner");
 
   checkWinner(game);
 
