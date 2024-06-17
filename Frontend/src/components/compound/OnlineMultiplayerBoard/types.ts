@@ -4,13 +4,14 @@ import { Cell, Game, Player } from "../../../lib/services/game/types";
 
 export type Fields = {
   game: Game;
-  handleReset: (id: string) => void;
+  handleReset: () => void;
   handleClick: (cell: Cell) => void;
-  setMode: Dispatch<SetStateAction<Mode>>;
+  handleLeaveGame: () => void;
 };
 
 export type OnlineBoardProps = {
   setMode: Dispatch<SetStateAction<Mode>>;
   selectedGame: Game;
   onlinePlayer: Player;
+  setSelectedGame: Dispatch<SetStateAction<Game | undefined>>;
 };

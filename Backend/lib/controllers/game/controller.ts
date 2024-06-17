@@ -136,6 +136,28 @@ gameRouter.get("/game/:id/reset", (req, res) => {
   res.status(200).json({ game: game });
 });
 
+gameRouter.post("/game/:id/leave", (req, res) => {
+  const { player } = req.body;
+  // grab game based on id
+  const game = games.find((game) => game.id === req.params.id);
+  // game found check
+  if (!game) {
+    return res.status(404).send("Game not found");
+  }
+
+  console.log(game);
+
+  if (game.playerO?.name === player.name) {
+    game.playerO = null;
+    return res.status(200).json({ message: "player left game" });
+  }
+  if (game.playerX?.name === player.name) {
+    game.playerX = null;
+    return res.status(200).json({ message: "player left game" });
+  }
+  return res.status(400).send("player couldn't be removed from the game");
+});
+
 gameRouter.post("/game/:id/move", (req, res) => {
   // grab game based on id
   const game = games.find((game) => game.id === req.params.id);

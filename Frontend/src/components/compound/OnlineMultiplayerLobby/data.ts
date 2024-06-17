@@ -47,5 +47,6 @@ export const useLobbyData = (onlinePlayer: Player) => {
     handleCreateGame,
     gameTitle,
     setGameTitle,
+    setSelectedGame,
   };
 };

@@ -10,6 +10,7 @@ const Component = ({
   handleCreateGame,
   gameTitle,
   setGameTitle,
+  setSelectedGame,
 }: Fields) => {
   if (selectedGame) {
     return (
@@ -17,6 +18,7 @@ const Component = ({
         setMode={setMode}
         selectedGame={selectedGame}
         onlinePlayer={onlinePlayer}
+        setSelectedGame={setSelectedGame}
       />
     );
   }

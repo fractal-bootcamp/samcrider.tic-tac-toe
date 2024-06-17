@@ -6,10 +6,12 @@ const OnlineMultiplayerBoard = ({
   selectedGame,
   setMode,
   onlinePlayer,
+  setSelectedGame,
 }: OnlineBoardProps) => {
-  const { handleClick, handleReset, game } = useBoardData(
+  const { handleClick, handleReset, game, handleLeaveGame } = useBoardData(
     selectedGame,
-    onlinePlayer
+    onlinePlayer,
+    setSelectedGame
   );
 
   if (game) {
@@ -18,7 +20,7 @@ const OnlineMultiplayerBoard = ({
         handleClick={handleClick}
         handleReset={handleReset}
         game={game}
-        setMode={setMode}
+        handleLeaveGame={handleLeaveGame}
       />
     );
   }

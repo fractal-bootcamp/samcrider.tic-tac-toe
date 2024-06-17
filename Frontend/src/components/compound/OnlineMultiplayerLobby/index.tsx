@@ -10,6 +10,7 @@ const OnlineMultiplayerLobby = ({ onlinePlayer, setMode }: LobbyProps) => {
     handleCreateGame,
     gameTitle,
     setGameTitle,
+    setSelectedGame,
   } = useLobbyData(onlinePlayer);
   return (
     <Component
@@ -21,6 +22,7 @@ const OnlineMultiplayerLobby = ({ onlinePlayer, setMode }: LobbyProps) => {
       handleCreateGame={handleCreateGame}
       gameTitle={gameTitle}
       setGameTitle={setGameTitle}
+      setSelectedGame={setSelectedGame}
     />
   );
 };
