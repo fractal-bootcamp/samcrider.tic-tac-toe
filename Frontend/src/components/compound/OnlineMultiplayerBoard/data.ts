@@ -25,18 +25,9 @@ export const useBoardData = (
   }, [poller]);
 
   const handleClick = async (cell: Cell) => {
-    console.log("a cell has been clicked");
-
-    console.log(
-      "current player, then online player",
-      game?.currentPlayer?.name,
-      onlinePlayer.name
-    );
     if (!game) return;
 
     if (game.currentPlayer?.name === onlinePlayer.name) {
-      console.log("calling game service");
-
       const data = await gameService().makeGameMove(cell, game.id);
       setGame(data.game);
     }

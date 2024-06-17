@@ -35,8 +35,6 @@ export const useBoardData = () => {
     [board[2].value, board[4].value, board[6].value],
   ];
 
-  console.log("is it");
-
   const checkWinner = () => {
     possibleWinPositions.forEach((possibleWinPosition) => {
       // loop through each possibility

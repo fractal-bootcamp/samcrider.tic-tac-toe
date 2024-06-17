@@ -26,13 +26,7 @@ export const useLobbyData = (onlinePlayer: Player) => {
   };
 
   const handleCreateGame = async () => {
-    console.log("about to await game service");
-
-    console.log(gameTitle);
-    console.log(onlinePlayer);
-
     const data = await gameService().createGame(onlinePlayer, gameTitle);
-    console.log(data.game);
 
     setSelectedGame(data.game);
   };
