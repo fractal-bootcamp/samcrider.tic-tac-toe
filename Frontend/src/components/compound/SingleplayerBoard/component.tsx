@@ -11,11 +11,11 @@ const Component = ({
 }: Fields) => {
   return (
     <div className="flex flex-col items-center">
-      <div className={s.boardContainer}>
+      <div className="grid grid-cols-3 aspect-square lg:w-[79%] w-[80%] ">
         {board.map((cell, i) => (
           <button
             key={i}
-            className={s.boardButton}
+            className={`${s.boardButton} aspect-square `}
             onClick={() => handleClick(cell)}
             disabled={
               gameState.currentGameFinished ? true : cell.value ? true : false

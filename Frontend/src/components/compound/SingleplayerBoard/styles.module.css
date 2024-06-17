@@ -1,12 +1,15 @@
 .boardContainer {
-  display: flex;
-  flex-wrap: wrap;
-  width: 650px;
+  /* display: flex; */
+  /* flex-wrap: wrap; */
+  /* width: 100%; */
+  /* aspect-ratio: 1 / 1; */
+  /* min-width: 0; */
+  /* max-width: 600px; */
 }
 
 .boardButton {
-  flex: 1 0 calc(33.333% - 8px); /* 33.333% width with 8px margin */
-  height: 200px;
+  /* flex: 1 0 calc(33.333% - 8px); 33.333% width with 8px margin */
+  /* height: calc(33%); */
   background-color: white;
   border-radius: 20px;
   margin: 4px;
