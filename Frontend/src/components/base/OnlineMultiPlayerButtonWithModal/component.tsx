@@ -28,7 +28,7 @@ const OnlineMultiPlayer = ({
                 className="input input-bordered w-full"
                 value={onlinePlayer.name}
                 onChange={({ target }) =>
-                  setOnlinePlayer({ name: target.value })
+                  setOnlinePlayer({ ...onlinePlayer, name: target.value })
                 }
               />
             </div>
@@ -37,7 +37,7 @@ const OnlineMultiPlayer = ({
               onClick={() => {
                 setMode(3);
               }}
-              disabled={!onlinePlayer ? true : false}
+              disabled={!onlinePlayer.name ? true : false}
             >
               Drop In
             </button>

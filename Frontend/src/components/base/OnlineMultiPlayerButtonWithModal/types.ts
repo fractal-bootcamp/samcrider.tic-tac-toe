@@ -1,8 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
-import { Mode, OnlinePlayerInputDto } from "../../pages/Start/types";
+import { Mode } from "../../pages/Start/types";
+import { Player } from "../../../lib/services/game/types";
 
 export type Fields = {
   setMode: Dispatch<SetStateAction<Mode>>;
-  setOnlinePlayer: Dispatch<SetStateAction<OnlinePlayerInputDto>>;
-  onlinePlayer: OnlinePlayerInputDto;
+  setOnlinePlayer: Dispatch<SetStateAction<Player>>;
+  onlinePlayer: Player;
 };
