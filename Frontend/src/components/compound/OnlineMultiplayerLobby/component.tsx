@@ -24,7 +24,7 @@ const Component = ({
   }
 
   return (
-    <div className="h-[100vh] flex flex-col items-center gap-24 p-10">
+    <div className="h-[100vh] w-[100vw] flex flex-col items-center gap-24 p-10">
       <div className="flex flex-row items-center gap-10">
         <div className="uppercase text-8xl text-white font-extrabold">
           lobby
