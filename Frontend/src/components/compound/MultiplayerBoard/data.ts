@@ -36,7 +36,7 @@ export const useBoardData = () => {
   ];
 
   const checkWinner = () => {
-    possibleWinPositions.forEach((possibleWinPosition) => {
+    possibleWinPositions.every((possibleWinPosition) => {
       // loop through each possibility
       const currentGameState = possibleWinPosition.reduce((curr, acc) => {
         // if current value is null, there is no win in current possibility
@@ -53,19 +53,20 @@ export const useBoardData = () => {
       if (!currentGameState) {
         // if the board is full
         if (!board.find((cell) => !cell.value)) {
-          return setGameState({
+          setGameState({
             ...gameState,
             ties: gameState.ties + 1,
             currentGameFinished: true,
           });
+          return false;
         }
         // just return if board isn't full
-        return;
+        return true;
       }
 
       // if win condition found, set accordingly
       if (currentGameState === TurnEnum.X) {
-        return setGameState({
+        setGameState({
           ...gameState,
           winner: {
             ...gameState.winner,
@@ -73,10 +74,11 @@ export const useBoardData = () => {
           },
           currentGameFinished: true,
         });
+        return false;
       }
 
       if (currentGameState === TurnEnum.O) {
-        return setGameState({
+        setGameState({
           ...gameState,
           winner: {
             ...gameState.winner,
@@ -84,7 +86,9 @@ export const useBoardData = () => {
           },
           currentGameFinished: true,
         });
+        return false;
       }
+      return true;
     });
   };
 

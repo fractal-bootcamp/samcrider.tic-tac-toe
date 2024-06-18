@@ -179,6 +179,7 @@ gameRouter.get("/game/:id/reset", async (req, res) => {
           { id: 8, value: null },
         ],
         winState: {
+          ...(game.winState as JsonObject),
           currentGameFinished: false,
         },
         currentPlayer: game.playerX as JsonObject,
