@@ -15,7 +15,8 @@ export const checkWinner = (game: Game) => {
     [game.board[2].value, game.board[4].value, game.board[6].value],
   ];
 
-  possibleWinPositions.forEach(async (possibleWinPosition) => {
+  // with every() you can break out by returning falsy
+  possibleWinPositions.every(async (possibleWinPosition) => {
     // loop through each possibility
     const currentGameState = possibleWinPosition.reduce((curr, acc) => {
       // if current value is null, there is no win in current possibility
@@ -28,25 +29,6 @@ export const checkWinner = (game: Game) => {
       return null;
     });
 
-    // if the game is finished, we need to skip the rest of the possible win positions and return
-    // grab game
-    const potentiallyUpdatedGame: JsonObject | null =
-      await client.game.findUnique({
-        where: {
-          id: game.id,
-        },
-      });
-    // if error grabbing game, throw an error
-    if (!potentiallyUpdatedGame) {
-      throw new Error("couldn't find game");
-    }
-    // assert the winState
-    const winState = potentiallyUpdatedGame.winState as JsonObject;
-    // if the game is finished, return
-    if (winState.currentGameFinished) {
-      return;
-    }
-
     // there is no win condition
     if (!currentGameState) {
       // if the board is full
@@ -57,15 +39,16 @@ export const checkWinner = (game: Game) => {
           },
           data: {
             winState: {
+              ...game.winState,
               currentGameFinished: true,
               ties: game.winState.ties + 1,
             },
           },
         });
-        return;
+        return false;
       }
       // just return if board isn't full
-      return;
+      return true;
     }
 
     // if win condition found, set accordingly
@@ -76,12 +59,13 @@ export const checkWinner = (game: Game) => {
         },
         data: {
           winState: {
+            ...game.winState,
             currentGameFinished: true,
             playerX: game.winState.playerX + 1,
           },
         },
       });
-      return;
+      return false;
     }
 
     if (currentGameState === Symbol.O) {
@@ -91,12 +75,15 @@ export const checkWinner = (game: Game) => {
         },
         data: {
           winState: {
+            ...game.winState,
             currentGameFinished: true,
             playerO: game.winState.playerO + 1,
           },
         },
       });
-      return;
+      return false;
     }
+
+    return true;
   });
 };

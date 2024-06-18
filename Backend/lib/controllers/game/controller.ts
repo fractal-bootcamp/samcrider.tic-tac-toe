@@ -4,6 +4,7 @@ import { checkWinner } from "../../../utils/checkWinner";
 import client from "../../../utils/client";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { Prisma } from "@prisma/client";
+import { io } from "../../..";
 
 const gameRouter = express.Router();
 
@@ -71,6 +72,9 @@ gameRouter.post("/game/:id", async (req, res) => {
           } as JsonObject,
         },
       });
+      // web socket
+      io.emit("game_join_event", JSON.stringify(updatedGame));
+
       return res.status(200).json({ game: updatedGame });
     }
     // if no player x, add player x
@@ -82,6 +86,9 @@ gameRouter.post("/game/:id", async (req, res) => {
         playerX: { name: assertedPlayer.name, symbol: Symbol.X } as JsonObject,
       },
     });
+    // web socket
+    io.emit("game_join_event", JSON.stringify(updatedGame));
+
     // return game
     return res.status(200).json({ game: updatedGame });
   } catch (e) {
@@ -129,6 +136,11 @@ gameRouter.post("/create", async (req, res) => {
         } as JsonObject,
       },
     });
+
+    // web socket
+    const games = await client.game.findMany();
+    io.emit("game_event", JSON.stringify(games));
+
     return res.status(201).json({ game: newGame });
   } catch (e) {
     console.error(e);
@@ -167,11 +179,15 @@ gameRouter.get("/game/:id/reset", async (req, res) => {
           { id: 8, value: null },
         ],
         winState: {
+          ...(game.winState as JsonObject),
           currentGameFinished: false,
         },
         currentPlayer: game.playerX as JsonObject,
       },
     });
+    // web socket
+    io.emit("game_reset_event", JSON.stringify(updatedGame));
+
     // return the updated game
     return res.status(200).json({ game: updatedGame });
   } catch (e) {
@@ -203,7 +219,7 @@ gameRouter.post("/game/:id/leave", async (req, res) => {
 
     if (playerO && playerO.name === player.name) {
       // remove them from game
-      await client.game.update({
+      const updatedGame = await client.game.update({
         where: {
           id: req.params.id,
         },
@@ -211,12 +227,15 @@ gameRouter.post("/game/:id/leave", async (req, res) => {
           playerO: Prisma.JsonNull,
         },
       });
+      // web socket
+      io.emit("game_leave_event", JSON.stringify(updatedGame));
+
       return res.status(200).json({ message: "player left game" });
     }
     // if player X is trying to leave
     if (playerX && playerX.name === player.name) {
       // remove them from the game
-      await client.game.update({
+      const updatedGame = await client.game.update({
         where: {
           id: req.params.id,
         },
@@ -224,6 +243,9 @@ gameRouter.post("/game/:id/leave", async (req, res) => {
           playerX: Prisma.JsonNull,
         },
       });
+      // web socket
+      io.emit("game_leave_event", JSON.stringify(updatedGame));
+
       return res.status(200).json({ message: "player left game" });
     }
     // if neither player is trying to leave, something bad happened...
@@ -298,29 +320,36 @@ gameRouter.post("/game/:id/move", async (req, res) => {
 
     // if the game is finished, return
     if (winState.currentGameFinished) {
+      // web socket
+      io.emit("game_move_event", JSON.stringify(potentiallyUpdatedGame));
+
       return res.status(200).json({ game: potentiallyUpdatedGame });
+    } else {
+      // else, toggle current player
+      const gameAfterToggleTurn =
+        currentPlayer.symbol === Symbol.X
+          ? await client.game.update({
+              where: {
+                id: req.params.id,
+              },
+              data: {
+                currentPlayer: potentiallyUpdatedGame.playerO as JsonObject,
+              },
+            })
+          : await client.game.update({
+              where: {
+                id: req.params.id,
+              },
+              data: {
+                currentPlayer: potentiallyUpdatedGame.playerX as JsonObject,
+              },
+            });
+      // return toggled game
+      // web socket
+      io.emit("game_move_event", JSON.stringify(gameAfterToggleTurn));
+
+      res.status(200).json({ game: gameAfterToggleTurn });
     }
-    // else, toggle current player
-    const gameAfterToggleTurn =
-      currentPlayer.symbol === Symbol.X
-        ? await client.game.update({
-            where: {
-              id: req.params.id,
-            },
-            data: {
-              currentPlayer: potentiallyUpdatedGame.playerO as JsonObject,
-            },
-          })
-        : await client.game.update({
-            where: {
-              id: req.params.id,
-            },
-            data: {
-              currentPlayer: potentiallyUpdatedGame.playerX as JsonObject,
-            },
-          });
-    // return toggled game
-    res.status(200).json({ game: gameAfterToggleTurn });
   } catch (e) {
     console.error(e);
     return res.status(400).json({ error: "Current move couldn't be made" });
