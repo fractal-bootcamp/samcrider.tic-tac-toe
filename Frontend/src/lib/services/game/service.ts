@@ -17,7 +17,7 @@ export interface GameApi {
 type GameService = () => GameApi;
 
 const axiosInstance = axios.create({
-  baseURL: process.env.API_URL || import.meta.env.API_URL,
+  baseURL: process.env.API_URL,
 });
 
 export const gameService: GameService = () => ({
