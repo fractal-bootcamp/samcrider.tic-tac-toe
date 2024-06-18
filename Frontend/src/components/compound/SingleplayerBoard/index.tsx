@@ -2,7 +2,7 @@ import Component from "./component";
 import { useBoardData } from "./data";
 import { BoardProps } from "./types";
 
-const SingleplayerBoard = ({ players, setMode, difficulty }: BoardProps) => {
+const SingleplayerBoard = ({ players, setMode }: BoardProps) => {
   const { handleClick, handleReset, board, gameState } = useBoardData();
   return (
     <Component

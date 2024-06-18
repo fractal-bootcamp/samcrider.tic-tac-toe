@@ -10,6 +10,7 @@ const SinglePlayer = ({
   return (
     <div>
       <button
+        disabled={true}
         className="btn btn-wide btn-warning"
         onClick={() =>
           (
