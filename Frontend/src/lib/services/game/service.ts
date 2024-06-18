@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Cell, Player } from "./types";
 
-const baseUrl: string = "/api/games";
+const basePath: string = "/api/games";
 
 // FIX THESE ANY TYPES!
 export interface GameApi {
@@ -16,10 +16,12 @@ export interface GameApi {
 
 type GameService = () => GameApi;
 
+const axiosInstance = axios.create({ baseURL: import.meta.env.API_URL });
+
 export const gameService: GameService = () => ({
   getAllGames: async () => {
     try {
-      const res = await axios.get(`${baseUrl}`);
+      const res = await axiosInstance.get(`${basePath}`);
       return res.data;
     } catch (e) {
       console.error(e);
@@ -28,7 +30,9 @@ export const gameService: GameService = () => ({
 
   getGame: async (id: string, player: Player) => {
     try {
-      const res = await axios.post(`${baseUrl}/game/${id}`, { player: player });
+      const res = await axiosInstance.post(`${basePath}/game/${id}`, {
+        player: player,
+      });
       return res.data;
     } catch (e) {
       console.error(e);
@@ -36,7 +40,7 @@ export const gameService: GameService = () => ({
   },
   createGame: async (player: Player, gameTitle: string) => {
     try {
-      const res = await axios.post(`${baseUrl}/create`, {
+      const res = await axiosInstance.post(`${basePath}/create`, {
         gameTitle: gameTitle,
         player: player,
       });
@@ -47,7 +51,7 @@ export const gameService: GameService = () => ({
   },
   makeGameMove: async (cell: Cell, id: string) => {
     try {
-      const res = await axios.post(`${baseUrl}/game/${id}/move`, {
+      const res = await axiosInstance.post(`${basePath}/game/${id}/move`, {
         cell: cell,
       });
       return res.data;
@@ -57,7 +61,7 @@ export const gameService: GameService = () => ({
   },
   resetGameBoard: async (id: string) => {
     try {
-      const res = await axios.get(`${baseUrl}/game/${id}/reset`);
+      const res = await axiosInstance.get(`${basePath}/game/${id}/reset`);
       return res.data;
     } catch (e) {
       console.error(e);
@@ -65,7 +69,7 @@ export const gameService: GameService = () => ({
   },
   leaveGame: async (id: string, player: Player) => {
     try {
-      await axios.post(`${baseUrl}/game/${id}/leave`, {
+      await axiosInstance.post(`${basePath}/game/${id}/leave`, {
         player: player,
       });
       return;
@@ -75,7 +79,7 @@ export const gameService: GameService = () => ({
   },
   removeEmptyGames: async () => {
     try {
-      await axios.delete(`${baseUrl}/remove`);
+      await axiosInstance.delete(`${basePath}/remove`);
       return;
     } catch (e) {
       console.error(e);
