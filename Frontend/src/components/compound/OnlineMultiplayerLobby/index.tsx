@@ -1,6 +1,7 @@
 import Component from "./component";
 import { useLobbyData } from "./data";
 import { LobbyProps } from "./types";
+import { Socket, io } from "socket.io-client";
 
 const OnlineMultiplayerLobby = ({ onlinePlayer, setMode }: LobbyProps) => {
   const {
@@ -12,6 +13,17 @@ const OnlineMultiplayerLobby = ({ onlinePlayer, setMode }: LobbyProps) => {
     setGameTitle,
     setSelectedGame,
   } = useLobbyData(onlinePlayer);
+
+  // create socket and useEffect to update gamelist state
+  const socket: Socket = io("http://localhost:5173", {
+    transports: ["websocket"],
+  });
+  socket.emit("sendMeGames");
+  socket.on("newGameList", (_games) => {
+    console.log("im in here!");
+    // setGames(games);
+  });
+
   return (
     <Component
       setMode={setMode}

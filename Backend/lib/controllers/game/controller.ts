@@ -129,6 +129,7 @@ gameRouter.post("/create", async (req, res) => {
         } as JsonObject,
       },
     });
+
     return res.status(201).json({ game: newGame });
   } catch (e) {
     console.error(e);

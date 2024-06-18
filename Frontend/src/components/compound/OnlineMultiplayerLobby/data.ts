@@ -35,7 +35,7 @@ export const useLobbyData = (onlinePlayer: Player) => {
     getAllGames();
 
     setTimeout(() => setPoller(poller + 1), 1000);
-  }, [poller]);
+  });
 
   return {
     games,
