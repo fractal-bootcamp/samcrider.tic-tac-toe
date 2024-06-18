@@ -1,6 +1,7 @@
 import { Cell, Game, Player } from "../../../lib/services/game/types";
 import { gameService } from "../../../lib/services/game/service";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
+import socket from "../../../lib/services/socket/service";
 
 export const useBoardData = (
   selectedGame: Game,
@@ -8,21 +9,24 @@ export const useBoardData = (
   setSelectedGame: Dispatch<SetStateAction<Game | undefined>>
 ) => {
   const [game, setGame] = useState<Game | null>(selectedGame);
-  const [poller, setPoller] = useState<number>(0);
 
-  useEffect(() => {
-    const unsubscribe = async () => {
-      if (!game) return;
+  // web sockets
 
-      const data = await gameService().hydrateGame(game.id);
-      const assertedGame = data.game as Game;
+  socket.on("game_move_event", (message) => {
+    setGame(JSON.parse(message));
+  });
 
-      setGame(assertedGame);
-    };
-    unsubscribe();
+  socket.on("game_join_event", (message) => {
+    setGame(JSON.parse(message));
+  });
 
-    setTimeout(() => setPoller(poller + 1), 1000);
-  }, [poller]);
+  socket.on("game_reset_event", (message) => {
+    setGame(JSON.parse(message));
+  });
+
+  socket.on("game_leave_event", (message) => {
+    setGame(JSON.parse(message));
+  });
 
   const handleClick = async (cell: Cell) => {
     if (!game) return;

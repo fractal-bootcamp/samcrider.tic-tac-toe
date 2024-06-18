@@ -3,12 +3,17 @@
 import { useEffect, useState } from "react";
 import { gameService } from "../../../lib/services/game/service";
 import type { Game, Player } from "../../../lib/services/game/types";
+import socket from "../../../lib/services/socket/service";
 
 export const useLobbyData = (onlinePlayer: Player) => {
   const [games, setGames] = useState<Game[] | undefined>(undefined);
   const [selectedGame, setSelectedGame] = useState<Game | undefined>(undefined);
   const [gameTitle, setGameTitle] = useState<string>("");
-  const [poller, setPoller] = useState<number>(0);
+
+  // web socket
+  socket.on("game_event", (message) => {
+    setGames(JSON.parse(message));
+  });
 
   const getAllGames = async () => {
     try {
@@ -20,6 +25,10 @@ export const useLobbyData = (onlinePlayer: Player) => {
     }
   };
 
+  useEffect(() => {
+    getAllGames();
+  }, []);
+
   const handleJoinGame = async (id: string) => {
     const data = await gameService().getGame(id, onlinePlayer);
     setSelectedGame(data.game);
@@ -30,12 +39,6 @@ export const useLobbyData = (onlinePlayer: Player) => {
 
     setSelectedGame(data.game);
   };
-
-  useEffect(() => {
-    getAllGames();
-
-    setTimeout(() => setPoller(poller + 1), 1000);
-  });
 
   return {
     games,
