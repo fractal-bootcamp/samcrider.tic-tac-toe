@@ -16,7 +16,10 @@ export interface GameApi {
 
 type GameService = () => GameApi;
 
-const axiosInstance = axios.create({ baseURL: import.meta.env.API_URL });
+const axiosInstance = axios.create({
+  // baseURL: import.meta.env.API_URL || process?.env.API_URL,
+  baseURL: import.meta.env.API_URL,
+});
 
 export const gameService: GameService = () => ({
   getAllGames: async () => {
