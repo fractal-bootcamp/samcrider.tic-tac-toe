@@ -10,8 +10,8 @@ export interface GameApi {
   createGame: (player: Player, gameTitle: string) => Promise<any>;
   makeGameMove: (cell: Cell, id: string) => Promise<any>;
   resetGameBoard: (id: string) => Promise<any>;
-  hydrateGame: (id: string) => Promise<any>;
   leaveGame: (id: string, player: Player) => Promise<any>;
+  removeEmptyGames: () => Promise<any>;
 }
 
 type GameService = () => GameApi;
@@ -25,14 +25,7 @@ export const gameService: GameService = () => ({
       console.error(e);
     }
   },
-  hydrateGame: async (id: string) => {
-    try {
-      const res = await axios.get(`${baseUrl}/game/${id}`);
-      return res.data;
-    } catch (e) {
-      console.error(e);
-    }
-  },
+
   getGame: async (id: string, player: Player) => {
     try {
       const res = await axios.post(`${baseUrl}/game/${id}`, { player: player });
@@ -75,6 +68,14 @@ export const gameService: GameService = () => ({
       await axios.post(`${baseUrl}/game/${id}/leave`, {
         player: player,
       });
+      return;
+    } catch (e) {
+      console.error(e);
+    }
+  },
+  removeEmptyGames: async () => {
+    try {
+      await axios.delete(`${baseUrl}/remove`);
       return;
     } catch (e) {
       console.error(e);
