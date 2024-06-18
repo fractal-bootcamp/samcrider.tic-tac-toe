@@ -11,7 +11,7 @@ export const useLobbyData = (onlinePlayer: Player) => {
   const [gameTitle, setGameTitle] = useState<string>("");
 
   // web socket
-  socket.on("game_event", (message) => {
+  socket.on("game_get_all_event", (message) => {
     setGames(JSON.parse(message));
   });
 
@@ -25,7 +25,16 @@ export const useLobbyData = (onlinePlayer: Player) => {
     }
   };
 
+  const removeEmptyGames = async () => {
+    try {
+      await gameService().removeEmptyGames();
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   useEffect(() => {
+    removeEmptyGames();
     getAllGames();
   }, []);
 

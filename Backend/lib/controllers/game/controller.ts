@@ -9,16 +9,33 @@ import { io } from "../../..";
 const gameRouter = express.Router();
 
 gameRouter.get("/", async (_req, res) => {
-  // if a game has no players, delete it
-  await client.game.deleteMany({
-    where: {
-      playerO: { equals: Prisma.JsonNull },
-      playerX: { equals: Prisma.JsonNull },
-    },
-  });
   // get all the games and return them
   const games = await client.game.findMany();
   res.status(200).json({ games: games });
+});
+
+gameRouter.delete("/remove", async (_req, res) => {
+  try {
+    // if a game has no players, delete it
+    await client.game.deleteMany({
+      where: {
+        playerO: { equals: Prisma.JsonNull },
+        playerX: { equals: Prisma.JsonNull },
+      },
+    });
+    // web socket
+    const games = await client.game.findMany();
+    console.log(games);
+
+    io.emit("game_get_all_event", JSON.stringify(games));
+
+    return res
+      .status(200)
+      .json({ message: "empty games successfully deleted" });
+  } catch (e) {
+    console.error(e);
+    return res.status(400).json({ error: "failed to delete games" });
+  }
 });
 
 gameRouter.get("/game/:id", async (req, res) => {
@@ -139,7 +156,7 @@ gameRouter.post("/create", async (req, res) => {
 
     // web socket
     const games = await client.game.findMany();
-    io.emit("game_event", JSON.stringify(games));
+    io.emit("game_get_all_event", JSON.stringify(games));
 
     return res.status(201).json({ game: newGame });
   } catch (e) {

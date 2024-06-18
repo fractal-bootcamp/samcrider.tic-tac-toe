@@ -46,15 +46,16 @@ export const useBoardData = (
 
   // NOTE: the game needs to be unplayable without two players
   const handleLeaveGame = async () => {
-    // hit backend and remove the player from the game object
-    // just return 200 status and then set the mode to 3 to move player back to lobby
     if (!game) return;
-    gameService()
-      .leaveGame(game.id, onlinePlayer)
-      .then(() => {
-        setGame(null);
-        setSelectedGame(undefined);
-      });
+
+    await gameService().leaveGame(game.id, onlinePlayer);
+    // since player is going back to lobby, remove any empty games from the lobby
+    await gameService().removeEmptyGames();
+
+    // set game to null and
+    setGame(null);
+    // move player back to lobby by setting selected game to undefined
+    setSelectedGame(undefined);
   };
 
   return {
