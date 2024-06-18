@@ -17,6 +17,7 @@ export default ({ mode }: ConfigEnv) => {
         },
         "/socket.io": {
           target: "http://localhost:3004",
+          changeOrigin: true,
           ws: true,
         },
       },
