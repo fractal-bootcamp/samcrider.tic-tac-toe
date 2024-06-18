@@ -12,11 +12,11 @@ export default ({ mode }: ConfigEnv) => {
     server: {
       proxy: {
         "/api": {
-          target: "http://localhost:3004",
+          target: env.API_URL,
           changeOrigin: true,
         },
         "/socket.io": {
-          target: "http://localhost:3004",
+          target: env.API_URL,
           changeOrigin: true,
           ws: true,
         },
