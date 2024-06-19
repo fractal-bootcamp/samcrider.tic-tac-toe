@@ -11,11 +11,7 @@ app.use(
       "http://localhost:5173",
     ],
 
-    allowedHeaders: [
-      "Access-Control-Allow-Origin",
-      "Access-Control-Allow-Methods",
-      "Access-Control-Allow-Headers",
-    ],
+    allowedHeaders: ["Content-Type"],
   })
 );
 app.use(express.json());
