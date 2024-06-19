@@ -6,7 +6,16 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "https://frontend-tictactoe-z8th.onrender.com",
+      "http://localhost:5173",
+    ],
+
+    allowedHeaders: [
+      "Access-Control-Allow-Origin",
+      "Access-Control-Allow-Methods",
+      "Access-Control-Allow-Headers",
+    ],
   })
 );
 app.use(express.json());
